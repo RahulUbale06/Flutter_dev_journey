@@ -1,0 +1,673 @@
+# Flutter Component Revision Page — `TextField`
+
+## 1. What is `TextField`?
+
+`TextField` is a Flutter widget that allows the user to **enter text or other input**.
+
+Examples:
+
+* Name
+* Email
+* Password
+* Search
+* Phone number
+* Currency amount
+* Address
+
+Basic:
+
+```dart
+TextField()
+```
+
+---
+
+# 2. Basic Example
+
+```dart
+TextField(
+  decoration: InputDecoration(
+    hintText: "Enter your name",
+  ),
+)
+```
+
+This creates an input field.
+
+---
+
+# 3. `InputDecoration`
+
+`InputDecoration` controls the **appearance and labels** of a TextField.
+
+Common properties:
+
+```dart
+TextField(
+  decoration: InputDecoration(
+    labelText: "Name",
+    hintText: "Enter your name",
+    prefixIcon: Icon(Icons.person),
+    border: OutlineInputBorder(),
+  ),
+)
+```
+
+Important properties:
+
+| Property     | Purpose               |
+| ------------ | --------------------- |
+| `labelText`  | Label for the field   |
+| `hintText`   | Hint/example text     |
+| `prefixIcon` | Icon at the beginning |
+| `suffixIcon` | Icon at the end       |
+| `prefixText` | Text before input     |
+| `suffixText` | Text after input      |
+| `border`     | Controls border       |
+| `filled`     | Gives background fill |
+| `fillColor`  | Background color      |
+
+---
+
+# 4. `labelText` vs `hintText`
+
+This is important.
+
+### `hintText`
+
+```dart
+hintText: "Enter email"
+```
+
+Shows a hint when the field is empty.
+
+### `labelText`
+
+```dart
+labelText: "Email"
+```
+
+Acts as the field's label and can move above the field when focused.
+
+Example:
+
+```dart
+TextField(
+  decoration: InputDecoration(
+    labelText: "Email",
+    hintText: "example@gmail.com",
+    border: OutlineInputBorder(),
+  ),
+)
+```
+
+---
+
+# 5. Outlined TextField
+
+One of the most commonly used designs:
+
+```dart
+TextField(
+  decoration: InputDecoration(
+    labelText: "Email",
+    border: OutlineInputBorder(),
+  ),
+)
+```
+
+Result conceptually:
+
+```text
+┌─────────────────────────────┐
+│ Email                       │
+│                             │
+└─────────────────────────────┘
+```
+
+---
+
+# 6. Prefix Icon
+
+```dart
+TextField(
+  decoration: InputDecoration(
+    labelText: "Email",
+    prefixIcon: Icon(Icons.email),
+    border: OutlineInputBorder(),
+  ),
+)
+```
+
+Conceptually:
+
+```text
+┌─────────────────────────────┐
+│ ✉  Email                   │
+└─────────────────────────────┘
+```
+
+Common uses:
+
+* Email
+* Username
+* Phone
+* Search
+* Location
+
+---
+
+# 7. Suffix Icon
+
+```dart
+TextField(
+  decoration: InputDecoration(
+    labelText: "Password",
+    suffixIcon: Icon(Icons.visibility),
+    border: OutlineInputBorder(),
+  ),
+)
+```
+
+The icon appears on the right.
+
+A common use is a **show/hide password** button.
+
+---
+
+# 8. Password Field
+
+Use:
+
+```dart
+obscureText: true
+```
+
+Example:
+
+```dart
+TextField(
+  obscureText: true,
+  decoration: InputDecoration(
+    labelText: "Password",
+    prefixIcon: Icon(Icons.lock),
+    border: OutlineInputBorder(),
+  ),
+)
+```
+
+Instead of showing:
+
+```text
+mypassword123
+```
+
+it shows something like:
+
+```text
+••••••••••••
+```
+
+---
+
+# 9. `TextEditingController`
+
+This is **very important**.
+
+A `TextEditingController` allows you to:
+
+* Read entered text
+* Set text
+* Clear text
+* Modify text
+
+Create:
+
+```dart
+TextEditingController nameController =
+    TextEditingController();
+```
+
+Connect it:
+
+```dart
+TextField(
+  controller: nameController,
+)
+```
+
+---
+
+# 10. Reading Text
+
+Suppose the user enters:
+
+```text
+John
+```
+
+You can get it using:
+
+```dart
+nameController.text
+```
+
+Example:
+
+```dart
+ElevatedButton(
+  onPressed: () {
+    print(nameController.text);
+  },
+  child: Text("Submit"),
+)
+```
+
+If the user entered:
+
+```text
+John
+```
+
+the output will be:
+
+```text
+John
+```
+
+---
+
+# 11. Clearing Text
+
+This is useful when you want to clear the field.
+
+```dart
+nameController.clear();
+```
+
+For example:
+
+```dart
+ElevatedButton(
+  onPressed: () {
+    nameController.clear();
+  },
+  child: Text("Clear"),
+)
+```
+
+This removes the entered text.
+
+If you have multiple fields:
+
+```dart
+nameController.clear();
+emailController.clear();
+passwordController.clear();
+```
+
+---
+
+# 12. Controller Must Be Disposed
+
+If you create a controller inside a `StatefulWidget`, dispose it:
+
+```dart
+@override
+void dispose() {
+  nameController.dispose();
+  super.dispose();
+}
+```
+
+Complete structure:
+
+```dart
+class MyPage extends StatefulWidget {
+  const MyPage({super.key});
+
+  @override
+  State<MyPage> createState() => _MyPageState();
+}
+
+class _MyPageState extends State<MyPage> {
+
+  final TextEditingController nameController =
+      TextEditingController();
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      controller: nameController,
+    );
+  }
+}
+```
+
+---
+
+# 13. `keyboardType`
+
+You can tell Flutter what type of keyboard is appropriate.
+
+### Email
+
+```dart
+keyboardType: TextInputType.emailAddress
+```
+
+### Number
+
+```dart
+keyboardType: TextInputType.number
+```
+
+### Phone
+
+```dart
+keyboardType: TextInputType.phone
+```
+
+Example:
+
+```dart
+TextField(
+  keyboardType: TextInputType.number,
+  decoration: InputDecoration(
+    labelText: "Amount",
+    border: OutlineInputBorder(),
+  ),
+)
+```
+
+This is useful for currency converters, calculators, OTP fields, etc.
+
+---
+
+# 14. `maxLength`
+
+Controls the maximum number of characters.
+
+```dart
+TextField(
+  maxLength: 10,
+)
+```
+
+For example, useful for a phone number.
+
+---
+
+# 15. `maxLines`
+
+Controls how many lines the field can contain.
+
+Single-line:
+
+```dart
+TextField(
+  maxLines: 1,
+)
+```
+
+Multi-line:
+
+```dart
+TextField(
+  maxLines: 5,
+)
+```
+
+Useful for:
+
+* Comments
+* Messages
+* Feedback
+* Descriptions
+* Addresses
+
+---
+
+# 16. `onChanged`
+
+Runs whenever the user changes the text.
+
+```dart
+TextField(
+  onChanged: (value) {
+    print(value);
+  },
+)
+```
+
+If the user types:
+
+```text
+H
+He
+Hel
+Hell
+Hello
+```
+
+the callback runs as the value changes.
+
+This is useful for:
+
+* Search
+* Live validation
+* Filtering
+* Live calculations
+* Currency conversion
+
+---
+
+# 17. `onSubmitted`
+
+Runs when the user submits the input, usually using the keyboard action button.
+
+```dart
+TextField(
+  onSubmitted: (value) {
+    print(value);
+  },
+)
+```
+
+---
+
+# 18. Real-World Login Example
+
+```dart
+Column(
+  children: [
+
+    TextField(
+      decoration: InputDecoration(
+        labelText: "Email",
+        prefixIcon: Icon(Icons.email),
+        border: OutlineInputBorder(),
+      ),
+    ),
+
+    SizedBox(height: 15),
+
+    TextField(
+      obscureText: true,
+      decoration: InputDecoration(
+        labelText: "Password",
+        prefixIcon: Icon(Icons.lock),
+        border: OutlineInputBorder(),
+      ),
+    ),
+
+    SizedBox(height: 20),
+
+    ElevatedButton(
+      onPressed: () {},
+      child: Text("Login"),
+    ),
+  ],
+)
+```
+
+Structure:
+
+```text
+Email
+┌──────────────────────────┐
+│ ✉  Email                 │
+└──────────────────────────┘
+
+Password
+┌──────────────────────────┐
+│ 🔒 Password              │
+└──────────────────────────┘
+
+[ Login ]
+```
+
+---
+
+# 19. `TextField` vs `TextFormField`
+
+For simple input:
+
+```dart
+TextField()
+```
+
+For forms with validation:
+
+```dart
+TextFormField()
+```
+
+Example:
+
+```dart
+TextFormField(
+  validator: (value) {
+    if (value == null || value.isEmpty) {
+      return "Email is required";
+    }
+    return null;
+  },
+)
+```
+
+We'll cover **forms and validation** separately because they are important for real applications.
+
+---
+
+# 20. Common Mistakes
+
+### Mistake 1 — Forgetting the controller
+
+If you need to read or clear the text, use a controller.
+
+```dart
+controller: nameController
+```
+
+### Mistake 2 — Using `obscureText` for normal text
+
+Only use:
+
+```dart
+obscureText: true
+```
+
+for sensitive input such as passwords.
+
+### Mistake 3 — Creating controllers repeatedly inside `build()`
+
+Avoid:
+
+```dart
+Widget build(BuildContext context) {
+  TextEditingController controller =
+      TextEditingController();
+
+  ...
+}
+```
+
+Create the controller as a State field instead.
+
+---
+
+# 21. Quick Revision
+
+### Basic
+
+```dart
+TextField()
+```
+
+### Styled
+
+```dart
+TextField(
+  decoration: InputDecoration(
+    labelText: "Name",
+    border: OutlineInputBorder(),
+  ),
+)
+```
+
+### Password
+
+```dart
+TextField(
+  obscureText: true,
+)
+```
+
+### Controller
+
+```dart
+final controller = TextEditingController();
+
+TextField(
+  controller: controller,
+)
+```
+
+### Read
+
+```dart
+controller.text
+```
+
+### Clear
+
+```dart
+controller.clear()
+```
+
+### Number keyboard
+
+```dart
+keyboardType: TextInputType.number
+```
+
+### Listen to changes
+
+```dart
+onChanged: (value) {
+  print(value);
+}
+```
+
+---
+
+## One-Line Definition
+
+> **`TextField` is a Flutter widget that allows users to enter and edit text or other types of input.**

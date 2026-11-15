@@ -1,0 +1,491 @@
+# Flutter — async, await and API Basics
+
+## 1. What is asynchronous code?
+
+Normally, code runs step by step:
+
+```text
+Step 1
+  ↓
+Step 2
+  ↓
+Step 3
+```
+
+But some operations take time:
+
+* Internet/API request
+* Database operation
+* Reading a file
+* Loading data
+
+You don't want the whole app to freeze while waiting.
+
+That's why Flutter uses **asynchronous programming**.
+
+---
+
+# 2. `Future`
+
+A `Future` means:
+
+> "I will give you the result later."
+
+Example:
+
+```dart
+Future<String> getName() async {
+  return "Alex";
+}
+```
+
+The result will eventually be:
+
+```text
+Alex
+```
+
+---
+
+# 3. `async`
+
+`async` tells Dart:
+
+> "This function performs asynchronous work."
+
+Example:
+
+```dart
+Future<String> getData() async {
+  return "Hello";
+}
+```
+
+Usually, an `async` function returns a `Future`.
+
+---
+
+# 4. `await`
+
+`await` means:
+
+> "Wait for this asynchronous operation to finish before continuing this function."
+
+Example:
+
+```dart
+Future<void> loadData() async {
+
+  print("Start");
+
+  await Future.delayed(
+    Duration(seconds: 2),
+  );
+
+  print("Data received");
+}
+```
+
+Flow:
+
+```text
+Start
+  ↓
+wait 2 seconds
+  ↓
+Data received
+```
+
+Important:
+
+`await` does **not freeze the entire Flutter app**.
+
+It waits inside that asynchronous function while Flutter can continue handling the UI.
+
+---
+
+# 5. Simple real-world example
+
+Imagine ordering food:
+
+```text
+Place order
+    ↓
+Restaurant prepares food
+    ↓
+Wait...
+    ↓
+Food arrives
+```
+
+In programming:
+
+```text
+API request
+    ↓
+await
+    ↓
+Response arrives
+    ↓
+Use response
+```
+
+---
+
+# 6. API
+
+An API allows your Flutter app to communicate with a server.
+
+For example:
+
+```text
+Flutter App
+     ↓
+   API
+     ↓
+ Server / Database
+     ↓
+   API Response
+     ↓
+Flutter App
+```
+
+A weather app might request:
+
+```text
+"Give me today's weather for Pune"
+```
+
+The server might return data such as:
+
+```json
+{
+  "city": "Pune",
+  "temperature": 28,
+  "condition": "Cloudy"
+}
+```
+
+---
+
+# 7. HTTP package
+
+Flutter commonly uses the `http` package for basic REST API requests.
+
+Import:
+
+```dart
+import 'package:http/http.dart' as http;
+```
+
+A GET request looks like:
+
+```dart
+final response = await http.get(
+  Uri.parse("https://example.com/api"),
+);
+```
+
+The important idea is:
+
+```text
+http.get()
+    ↓
+await
+    ↓
+server response
+```
+
+---
+
+# 8. Checking the response
+
+Usually check the status code:
+
+```dart
+if (response.statusCode == 200) {
+  print("Success");
+} else {
+  print("Request failed");
+}
+```
+
+Common status codes:
+
+```text
+200 → Success
+201 → Created
+400 → Bad request
+401 → Unauthorized
+404 → Not found
+500 → Server error
+```
+
+You don't need to memorize all of them right now.
+
+Remember:
+
+```text
+200 → request successful
+```
+
+---
+
+# 9. JSON
+
+APIs commonly send data as **JSON**.
+
+Example:
+
+```json
+{
+  "name": "Alex",
+  "age": 21
+}
+```
+
+In Dart, convert JSON text into a Map using:
+
+```dart
+jsonDecode()
+```
+
+Import:
+
+```dart
+import 'dart:convert';
+```
+
+Example:
+
+```dart
+final data = jsonDecode(response.body);
+```
+
+Then:
+
+```dart
+print(data["name"]);
+print(data["age"]);
+```
+
+Output:
+
+```text
+Alex
+21
+```
+
+---
+
+# 10. Complete basic API function
+
+```dart
+Future<void> getUser() async {
+
+  final response = await http.get(
+    Uri.parse("https://example.com/user"),
+  );
+
+  if (response.statusCode == 200) {
+
+    final data = jsonDecode(response.body);
+
+    print(data["name"]);
+
+  } else {
+
+    print("Failed to load user");
+  }
+}
+```
+
+The flow is:
+
+```text
+getUser()
+   ↓
+http.get()
+   ↓
+await response
+   ↓
+Check statusCode
+   ↓
+jsonDecode()
+   ↓
+Use data
+```
+
+---
+
+# 11. API + FutureBuilder
+
+This is where your previous topic connects.
+
+You can have:
+
+```text
+API
+ ↓
+Future
+ ↓
+FutureBuilder
+ ↓
+UI
+```
+
+Example:
+
+```dart
+Future<List<String>> getProducts() async {
+
+  final response = await http.get(
+    Uri.parse("https://example.com/products"),
+  );
+
+  if (response.statusCode == 200) {
+    final data = jsonDecode(response.body);
+
+    return List<String>.from(data);
+  }
+
+  throw Exception("Failed to load products");
+}
+```
+
+Then:
+
+```dart
+FutureBuilder<List<String>>(
+  future: getProducts(),
+
+  builder: (context, snapshot) {
+
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return CircularProgressIndicator();
+    }
+
+    if (snapshot.hasError) {
+      return Text("Error");
+    }
+
+    final products = snapshot.data!;
+
+    return ListView.builder(
+      itemCount: products.length,
+
+      itemBuilder: (context, index) {
+        return ListTile(
+          title: Text(products[index]),
+        );
+      },
+    );
+  },
+)
+```
+
+---
+
+# 12. The complete mental model
+
+This is important:
+
+```text
+USER OPENS SCREEN
+       ↓
+FutureBuilder
+       ↓
+API FUNCTION
+       ↓
+http.get()
+       ↓
+await
+       ↓
+SERVER RESPONSE
+       ↓
+JSON
+       ↓
+jsonDecode()
+       ↓
+DART DATA
+       ↓
+FutureBuilder
+       ↓
+UI
+```
+
+During the request:
+
+```text
+Loading indicator
+```
+
+If successful:
+
+```text
+Show data
+```
+
+If something fails:
+
+```text
+Show error
+```
+
+---
+
+# 13. What to remember
+
+You don't need to memorize everything yet.
+
+Remember these:
+
+```dart
+async
+```
+
+→ Function can perform asynchronous work.
+
+```dart
+await
+```
+
+→ Wait for an asynchronous result.
+
+```dart
+Future
+```
+
+→ Result that will be available later.
+
+```dart
+http.get()
+```
+
+→ Make a GET API request.
+
+```dart
+jsonDecode()
+```
+
+→ Convert JSON into Dart data.
+
+```dart
+FutureBuilder
+```
+
+→ Build UI based on the Future's state.
+
+### The most important flow:
+
+```text
+async + await
+       ↓
+API
+       ↓
+Future
+       ↓
+FutureBuilder
+       ↓
+UI
+```

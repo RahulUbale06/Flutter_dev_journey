@@ -1,0 +1,471 @@
+# Flutter Component Revision Page — `Icon`
+
+## 1. What is `Icon`?
+
+`Icon` is a Flutter widget used to display **small graphical symbols**.
+
+Examples:
+
+* Home 🏠
+* Search 🔍
+* Settings ⚙️
+* Heart ❤️
+* Profile 👤
+* Delete 🗑️
+* Menu ☰
+
+Flutter provides many built-in Material icons.
+
+---
+
+# 2. Basic Syntax
+
+```dart
+Icon(Icons.home)
+```
+
+Example:
+
+```dart
+Scaffold(
+  body: Center(
+    child: Icon(Icons.home),
+  ),
+)
+```
+
+---
+
+# 3. `Icons`
+
+`Icons` contains Flutter's built-in Material icons.
+
+Examples:
+
+```dart
+Icons.home
+Icons.search
+Icons.settings
+Icons.person
+Icons.favorite
+Icons.delete
+Icons.add
+Icons.close
+Icons.menu
+Icons.arrow_back
+Icons.arrow_forward
+Icons.email
+Icons.phone
+Icons.shopping_cart
+```
+
+You don't put quotes around the icon name.
+
+Correct:
+
+```dart
+Icon(Icons.home)
+```
+
+Not:
+
+```dart
+Icon("home")
+```
+
+---
+
+# 4. Changing Icon Size
+
+Use:
+
+```dart
+size:
+```
+
+Example:
+
+```dart
+Icon(
+  Icons.home,
+  size: 40,
+)
+```
+
+The default size is commonly around 24 logical pixels.
+
+---
+
+# 5. Changing Icon Color
+
+Use:
+
+```dart
+color:
+```
+
+Example:
+
+```dart
+Icon(
+  Icons.favorite,
+  color: Colors.red,
+)
+```
+
+You can combine size and color:
+
+```dart
+Icon(
+  Icons.favorite,
+  size: 35,
+  color: Colors.red,
+)
+```
+
+---
+
+# 6. Icon Inside a Row
+
+Very common in app development.
+
+```dart
+Row(
+  children: [
+    Icon(Icons.person),
+    SizedBox(width: 10),
+    Text("John"),
+  ],
+)
+```
+
+Result:
+
+```text
+👤  John
+```
+
+Common uses:
+
+* Profile information
+* Settings
+* Contact details
+* Menu items
+* List items
+
+---
+
+# 7. Icon Inside an AppBar
+
+Icons are extremely common in `AppBar`.
+
+```dart
+AppBar(
+  title: Text("Home"),
+  actions: [
+    Icon(Icons.search),
+    Icon(Icons.more_vert),
+  ],
+)
+```
+
+Usually, however, interactive icons should be placed inside `IconButton`.
+
+```dart
+AppBar(
+  title: Text("Home"),
+  actions: [
+    IconButton(
+      onPressed: () {},
+      icon: Icon(Icons.search),
+    ),
+  ],
+)
+```
+
+---
+
+# 8. `Icon` vs `IconButton`
+
+This distinction is important.
+
+### `Icon`
+
+Only **displays** the icon.
+
+```dart
+Icon(Icons.delete)
+```
+
+### `IconButton`
+
+Displays an icon that the user can **tap**.
+
+```dart
+IconButton(
+  onPressed: () {
+    print("Delete clicked");
+  },
+  icon: Icon(Icons.delete),
+)
+```
+
+### Remember
+
+```text
+Icon       → visual
+IconButton → clickable icon
+```
+
+---
+
+# 9. IconButton Example
+
+```dart
+IconButton(
+  onPressed: () {
+    print("Search clicked");
+  },
+  icon: Icon(Icons.search),
+)
+```
+
+When the user taps the icon, the code inside `onPressed` runs.
+
+---
+
+# 10. Real-World Example — Music Player
+
+A music player may have:
+
+```dart
+Row(
+  mainAxisAlignment: MainAxisAlignment.center,
+  children: [
+    IconButton(
+      onPressed: () {},
+      icon: Icon(Icons.skip_previous),
+    ),
+
+    IconButton(
+      onPressed: () {},
+      icon: Icon(Icons.play_arrow),
+    ),
+
+    IconButton(
+      onPressed: () {},
+      icon: Icon(Icons.skip_next),
+    ),
+  ],
+)
+```
+
+Conceptually:
+
+```text
+     ⏮       ▶       ⏭
+```
+
+---
+
+# 11. Icon + Text
+
+A very common UI pattern:
+
+```dart
+Row(
+  children: [
+    Icon(Icons.email),
+    SizedBox(width: 8),
+    Text("user@gmail.com"),
+  ],
+)
+```
+
+Result:
+
+```text
+✉  user@gmail.com
+```
+
+This pattern appears in:
+
+* Profile screens
+* Contact pages
+* Settings
+* User information
+* Product details
+
+---
+
+# 12. Icon in a Button
+
+Example:
+
+```dart
+ElevatedButton.icon(
+  onPressed: () {},
+  icon: Icon(Icons.login),
+  label: Text("Login"),
+)
+```
+
+Result:
+
+```text
+[ 🔑 Login ]
+```
+
+This is usually better than manually putting an icon and button together.
+
+---
+
+# 13. Icon in a Container
+
+You can style the area around an icon using `Container`.
+
+```dart
+Container(
+  padding: EdgeInsets.all(12),
+  decoration: BoxDecoration(
+    color: Colors.blue,
+    shape: BoxShape.circle,
+  ),
+  child: Icon(
+    Icons.person,
+    color: Colors.white,
+  ),
+)
+```
+
+This can create a circular icon background.
+
+---
+
+# 14. Important Icon Properties
+
+The commonly used properties are:
+
+```dart
+Icon(
+  Icons.home,
+  size: 30,
+  color: Colors.blue,
+  semanticLabel: "Home",
+)
+```
+
+### `size`
+
+Controls icon size.
+
+### `color`
+
+Controls icon color.
+
+### `semanticLabel`
+
+Provides a description useful for accessibility.
+
+---
+
+# 15. Where are Icons Used?
+
+Icons are used almost everywhere:
+
+* AppBar
+* Navigation
+* Buttons
+* Search
+* Settings
+* Profile
+* Delete
+* Edit
+* Favorite
+* Shopping cart
+* Music controls
+* Forms
+* Lists
+* Bottom navigation
+* Drawer menus
+
+---
+
+# 16. Common Mistake
+
+Don't use:
+
+```dart
+Icon(Icons.home)
+```
+
+when you need the user to perform an action.
+
+Use:
+
+```dart
+IconButton(
+  onPressed: () {},
+  icon: Icon(Icons.home),
+)
+```
+
+when the icon should be clickable.
+
+---
+
+# 17. Quick Revision
+
+### Display an icon
+
+```dart
+Icon(
+  Icons.home,
+)
+```
+
+### Change size
+
+```dart
+Icon(
+  Icons.home,
+  size: 30,
+)
+```
+
+### Change color
+
+```dart
+Icon(
+  Icons.home,
+  color: Colors.blue,
+)
+```
+
+### Clickable icon
+
+```dart
+IconButton(
+  onPressed: () {},
+  icon: Icon(Icons.home),
+)
+```
+
+### Icon + text
+
+```dart
+Row(
+  children: [
+    Icon(Icons.email),
+    Text("Email"),
+  ],
+)
+```
+
+---
+
+## One-Line Definitions
+
+> **`Icon` displays a graphical symbol.**
+
+> **`IconButton` displays an icon that the user can tap to perform an action.**

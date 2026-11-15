@@ -1,0 +1,289 @@
+# Flutter — Drawer
+
+## 1. What is a Drawer?
+
+A `Drawer` is a side menu that slides in from the left side of the screen.
+
+Common uses:
+
+* Home
+* Profile
+* Settings
+* About
+* Logout
+
+---
+
+## 2. Where do we add Drawer?
+
+A Drawer is added to **Scaffold**:
+
+```dart
+Scaffold(
+  appBar: AppBar(
+    title: Text("Home"),
+  ),
+
+  drawer: Drawer(
+    child: ...
+  ),
+
+  body: ...
+)
+```
+
+### Important
+
+You **do NOT add Drawer inside AppBar**.
+
+The structure is:
+
+```text
+MaterialApp
+    ↓
+Scaffold
+    ├── AppBar
+    ├── Drawer
+    └── Body
+```
+
+---
+
+## 3. How does the Drawer appear in the AppBar?
+
+When you write:
+
+```dart
+Scaffold(
+  appBar: AppBar(
+    title: Text("Home"),
+  ),
+
+  drawer: Drawer(
+    child: ...
+  ),
+)
+```
+
+Flutter automatically adds the **☰ hamburger/menu button** to the AppBar.
+
+You don't need to write:
+
+```dart
+IconButton(...)
+```
+
+for the basic Drawer.
+
+### Example
+
+```dart
+Scaffold(
+  appBar: AppBar(
+    title: Text("Home"),
+  ),
+
+  drawer: Drawer(
+    child: ListView(
+      children: [
+        DrawerHeader(
+          child: Text("My App"),
+        ),
+
+        ListTile(
+          leading: Icon(Icons.home),
+          title: Text("Home"),
+        ),
+
+        ListTile(
+          leading: Icon(Icons.settings),
+          title: Text("Settings"),
+        ),
+      ],
+    ),
+  ),
+
+  body: Center(
+    child: Text("Home Screen"),
+  ),
+)
+```
+
+The result is roughly:
+
+```text
+┌──────────────────────────────┐
+│ ☰   Home                     │
+├──────────────────────────────┤
+│                              │
+│         Home Screen          │
+│                              │
+└──────────────────────────────┘
+```
+
+Tap `☰` → Drawer opens.
+
+---
+
+## 4. DrawerHeader
+
+`DrawerHeader` is the top part of the Drawer.
+
+```dart
+DrawerHeader(
+  child: Text("My App"),
+)
+```
+
+You can put:
+
+* App name
+* Logo
+* Profile image
+* Username
+* Email
+
+inside it.
+
+---
+
+## 5. ListTile
+
+`ListTile` is commonly used for Drawer menu items.
+
+```dart
+ListTile(
+  leading: Icon(Icons.home),
+  title: Text("Home"),
+  onTap: () {
+    Navigator.pop(context);
+  },
+)
+```
+
+Important properties:
+
+```text
+leading   → left icon
+title     → main text
+subtitle  → smaller text
+trailing  → right-side widget
+onTap     → what happens when clicked
+```
+
+---
+
+## 6. Closing the Drawer
+
+When the user taps a menu item:
+
+```dart
+Navigator.pop(context);
+```
+
+closes the Drawer.
+
+Example:
+
+```dart
+ListTile(
+  leading: Icon(Icons.settings),
+  title: Text("Settings"),
+
+  onTap: () {
+    Navigator.pop(context);
+  },
+)
+```
+
+---
+
+## 7. Opening Drawer manually
+
+You can also open the Drawer using:
+
+```dart
+Scaffold.of(context).openDrawer();
+```
+
+But normally you don't need this because Flutter automatically provides the AppBar menu button.
+
+---
+
+## 8. Complete Example
+
+```dart
+import 'package:flutter/material.dart';
+
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Home"),
+      ),
+
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              child: Text(
+                "My App",
+                style: TextStyle(fontSize: 24),
+              ),
+            ),
+
+            ListTile(
+              leading: Icon(Icons.home),
+              title: Text("Home"),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+
+            ListTile(
+              leading: Icon(Icons.person),
+              title: Text("Profile"),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+
+            ListTile(
+              leading: Icon(Icons.settings),
+              title: Text("Settings"),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+
+            ListTile(
+              leading: Icon(Icons.logout),
+              title: Text("Logout"),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+      ),
+
+      body: Center(
+        child: Text("Home Screen"),
+      ),
+    );
+  }
+}
+```
+
+## Remember
+
+```text
+Drawer → Scaffold
+AppBar → automatically gets ☰
+ListTile → menu item
+Navigator.pop() → closes Drawer
+```

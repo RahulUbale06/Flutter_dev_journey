@@ -1,0 +1,442 @@
+# Flutter — Responsive UI
+
+## 1. What is Responsive UI?
+
+Responsive UI means your app's layout **adapts to different screen sizes**.
+
+For example:
+
+```text
+Small phone     Large phone      Tablet
+┌───────┐       ┌─────────┐      ┌──────────────┐
+│       │       │         │      │              │
+│  UI   │       │   UI    │      │      UI      │
+│       │       │         │      │              │
+└───────┘       └─────────┘      └──────────────┘
+```
+
+You shouldn't design everything for only one fixed screen size.
+
+---
+
+# 2. Avoid fixed sizes everywhere
+
+This can cause problems:
+
+```dart
+Container(
+  width: 350,
+  child: ...
+)
+```
+
+It may look fine on one phone but overflow on a smaller screen.
+
+Instead, use flexible layouts when possible:
+
+```dart
+Container(
+  width: double.infinity,
+  child: ...
+)
+```
+
+Or use:
+
+```dart
+Expanded()
+```
+
+inside a `Row` or `Column`.
+
+---
+
+# 3. `MediaQuery`
+
+`MediaQuery` gives information about the current screen.
+
+Example:
+
+```dart
+final screenWidth = MediaQuery.of(context).size.width;
+final screenHeight = MediaQuery.of(context).size.height;
+```
+
+Then you can use:
+
+```dart
+Container(
+  width: screenWidth * 0.8,
+  height: screenHeight * 0.2,
+)
+```
+
+For example:
+
+```text
+screen width = 400
+       ↓
+400 × 0.8
+       ↓
+320 pixels
+```
+
+---
+
+# 4. `double.infinity`
+
+For something that should use all available width:
+
+```dart
+width: double.infinity
+```
+
+Example:
+
+```dart
+SizedBox(
+  width: double.infinity,
+  child: ElevatedButton(
+    onPressed: () {},
+    child: Text("Login"),
+  ),
+)
+```
+
+This is very useful for:
+
+* Login buttons
+* Signup buttons
+* TextFields
+* Cards
+* Containers
+
+---
+
+# 5. Expanded
+
+You already learned `Expanded`.
+
+It is also very important for responsive layouts.
+
+Example:
+
+```dart
+Row(
+  children: [
+    Expanded(
+      child: Container(
+        height: 100,
+        child: Text("Left"),
+      ),
+    ),
+
+    Expanded(
+      child: Container(
+        height: 100,
+        child: Text("Right"),
+      ),
+    ),
+  ],
+)
+```
+
+The available width is divided between them.
+
+```text
+┌────────────────────────────┐
+│       Left    │    Right   │
+└────────────────────────────┘
+```
+
+If the screen becomes wider, both automatically get more space.
+
+---
+
+# 6. Flexible
+
+`Flexible` can prevent text and other content from causing overflow.
+
+Example:
+
+```dart
+Row(
+  children: [
+    Icon(Icons.person),
+
+    SizedBox(width: 10),
+
+    Flexible(
+      child: Text(
+        "This is a very long username that may not fit",
+      ),
+    ),
+  ],
+)
+```
+
+Instead of overflowing, the text can use the available space.
+
+---
+
+# 7. LayoutBuilder
+
+`LayoutBuilder` lets you build a layout based on the **available space**.
+
+Example:
+
+```dart
+LayoutBuilder(
+  builder: (context, constraints) {
+
+    if (constraints.maxWidth < 600) {
+      return Text("Mobile Layout");
+    } else {
+      return Text("Large Layout");
+    }
+  },
+)
+```
+
+The idea:
+
+```text
+Available width
+       ↓
+Check width
+       ↓
+Choose layout
+```
+
+For example:
+
+```text
+< 600 px
+   ↓
+Mobile layout
+
+≥ 600 px
+   ↓
+Tablet/large layout
+```
+
+---
+
+# 8. Responsive Row/Column
+
+Suppose you have:
+
+```text
+Image | Product information
+```
+
+On a large screen, a Row may work well:
+
+```dart
+Row(
+  children: [
+    Image.network(...),
+    Expanded(
+      child: Text("Product information"),
+    ),
+  ],
+)
+```
+
+But on a small screen, you may want:
+
+```text
+Image
+  ↓
+Product information
+```
+
+You can use `LayoutBuilder`:
+
+```dart
+LayoutBuilder(
+  builder: (context, constraints) {
+
+    if (constraints.maxWidth < 600) {
+      return Column(
+        children: [
+          Image.network(...),
+          Text("Product information"),
+        ],
+      );
+    }
+
+    return Row(
+      children: [
+        Image.network(...),
+        Expanded(
+          child: Text("Product information"),
+        ),
+      ],
+    );
+  },
+)
+```
+
+---
+
+# 9. Responsive Grid
+
+You don't always want exactly two columns.
+
+Instead of always:
+
+```dart
+crossAxisCount: 2
+```
+
+you can decide based on screen width:
+
+```dart
+final width = MediaQuery.of(context).size.width;
+
+final columns = width < 600 ? 2 : 4;
+```
+
+Then:
+
+```dart
+GridView.builder(
+  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+    crossAxisCount: columns,
+  ),
+
+  itemCount: products.length,
+
+  itemBuilder: (context, index) {
+    return Card(
+      child: Text(products[index]),
+    );
+  },
+)
+```
+
+Result:
+
+```text
+Small screen:
+
+┌────┬────┐
+│ 1  │ 2  │
+├────┼────┤
+│ 3  │ 4  │
+└────┴────┘
+
+
+Large screen:
+
+┌────┬────┬────┬────┐
+│ 1  │ 2  │ 3  │ 4  │
+├────┼────┼────┼────┤
+│ 5  │ 6  │ 7  │ 8  │
+└────┴────┴────┴────┘
+```
+
+---
+
+# 10. Orientation
+
+A phone can be:
+
+```text
+Portrait
+   ↓
+┌──────┐
+│      │
+│      │
+└──────┘
+```
+
+or:
+
+```text
+Landscape
+   ↓
+┌────────────┐
+│            │
+└────────────┘
+```
+
+You can detect orientation with:
+
+```dart
+final orientation = MediaQuery.of(context).orientation;
+```
+
+Then:
+
+```dart
+if (orientation == Orientation.portrait) {
+  // portrait layout
+} else {
+  // landscape layout
+}
+```
+
+---
+
+# 11. What should you use?
+
+Don't automatically use `MediaQuery` for everything.
+
+A good rule:
+
+```text
+Normal layout
+    ↓
+Row / Column / Expanded / Flexible
+
+Need screen size
+    ↓
+MediaQuery
+
+Need available space for this widget
+    ↓
+LayoutBuilder
+```
+
+---
+
+# 12. Important responsive tools
+
+Remember these:
+
+```text
+Expanded
+→ Share available space
+
+Flexible
+→ Allow child to fit available space
+
+double.infinity
+→ Use available width
+
+MediaQuery
+→ Get screen information
+
+LayoutBuilder
+→ Build based on available space
+```
+
+---
+
+# 13. Most important idea
+
+Don't think:
+
+```text
+"How many pixels should this widget be?"
+```
+
+Think:
+
+```text
+"How should this widget use the available space?"
+```
+
+That's the basic mindset behind responsive Flutter UI.

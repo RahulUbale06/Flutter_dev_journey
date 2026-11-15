@@ -1,0 +1,419 @@
+# Flutter Component: Scaffold
+
+## 1. What is `Scaffold`?
+
+`Scaffold` provides the **basic visual structure of a single Flutter screen**.
+
+It gives us predefined areas for things such as:
+
+* AppBar
+* Main body
+* Floating action button
+* Drawer
+* Bottom navigation
+* Bottom sheet
+* Background
+
+Think:
+
+```text
+MaterialApp
+= Entire application
+
+Scaffold
+= Structure of one screen
+```
+
+---
+
+## 2. Basic Syntax
+
+```dart
+Scaffold(
+  appBar: AppBar(
+    title: Text("My App"),
+  ),
+
+  body: Center(
+    child: Text("Hello"),
+  ),
+)
+```
+
+Usually it is placed inside `MaterialApp`:
+
+```dart
+MaterialApp(
+  home: Scaffold(
+    appBar: AppBar(
+      title: Text("My App"),
+    ),
+
+    body: Center(
+      child: Text("Hello"),
+    ),
+  ),
+)
+```
+
+---
+
+## 3. Main Structure
+
+```text
+Scaffold
+│
+├── appBar
+├── body
+├── floatingActionButton
+├── drawer
+├── endDrawer
+├── bottomNavigationBar
+├── bottomSheet
+└── backgroundColor
+```
+
+---
+
+# 4. Important Properties
+
+## `appBar`
+
+Creates the top bar of the screen.
+
+```dart
+Scaffold(
+  appBar: AppBar(
+    title: Text("Home"),
+  ),
+)
+```
+
+Structure:
+
+```text
+┌─────────────────────────────┐
+│ Home                        │
+├─────────────────────────────┤
+│                             │
+│          Body               │
+│                             │
+└─────────────────────────────┘
+```
+
+`AppBar` will be studied separately.
+
+---
+
+## `body`
+
+Contains the **main content of the screen**.
+
+```dart
+Scaffold(
+  body: Center(
+    child: Text("Hello"),
+  ),
+)
+```
+
+The `body` can contain almost any widget.
+
+For example:
+
+```dart
+Scaffold(
+  body: Column(
+    children: [
+      Text("Username"),
+      Text("Password"),
+    ],
+  ),
+)
+```
+
+Or:
+
+```dart
+Scaffold(
+  body: ListView(
+    children: [
+      Text("Item 1"),
+      Text("Item 2"),
+      Text("Item 3"),
+    ],
+  ),
+)
+```
+
+Remember:
+
+**`body` = Main area of the screen**
+
+---
+
+## `floatingActionButton`
+
+Creates a floating button, commonly near the bottom-right.
+
+```dart
+Scaffold(
+  body: Center(
+    child: Text("Home"),
+  ),
+
+  floatingActionButton: FloatingActionButton(
+    onPressed: () {},
+    child: Icon(Icons.add),
+  ),
+)
+```
+
+Common uses:
+
+* Add a contact
+* Create a note
+* Add a task
+* Compose a message
+
+Example:
+
+```text
+┌─────────────────────────────┐
+│ Home                        │
+│                             │
+│          Content            │
+│                             │
+│                         (+) │
+└─────────────────────────────┘
+```
+
+---
+
+## `drawer`
+
+Creates a side navigation menu.
+
+```dart
+Scaffold(
+  drawer: Drawer(
+    child: Text("Menu"),
+  ),
+)
+```
+
+A drawer can contain:
+
+```text
+☰ Menu
+────────────
+Home
+Profile
+Settings
+Logout
+```
+
+It is commonly used for navigation between different sections of an application.
+
+---
+
+## `bottomNavigationBar`
+
+Creates navigation at the bottom of the screen.
+
+```dart
+Scaffold(
+  bottomNavigationBar: BottomNavigationBar(
+    items: [
+      BottomNavigationBarItem(
+        icon: Icon(Icons.home),
+        label: "Home",
+      ),
+
+      BottomNavigationBarItem(
+        icon: Icon(Icons.person),
+        label: "Profile",
+      ),
+    ],
+  ),
+)
+```
+
+Typical result:
+
+```text
+┌─────────────────────────────┐
+│                             │
+│          Screen             │
+│                             │
+├─────────────────────────────┤
+│  🏠 Home       👤 Profile   │
+└─────────────────────────────┘
+```
+
+Commonly used in:
+
+* Social apps
+* Shopping apps
+* Music apps
+* Banking apps
+
+---
+
+## `backgroundColor`
+
+Changes the background color of the screen.
+
+```dart
+Scaffold(
+  backgroundColor: Colors.grey,
+
+  body: Center(
+    child: Text("Hello"),
+  ),
+)
+```
+
+---
+
+# 5. Complete Example
+
+```dart
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(
+    MaterialApp(
+      debugShowCheckedModeBanner: false,
+
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text("My App"),
+        ),
+
+        body: Center(
+          child: Text(
+            "Welcome",
+            style: TextStyle(fontSize: 25),
+          ),
+        ),
+
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {},
+          child: Icon(Icons.add),
+        ),
+      ),
+    ),
+  );
+}
+```
+
+Structure:
+
+```text
+MaterialApp
+    │
+    └── Scaffold
+         │
+         ├── AppBar
+         │
+         ├── Body
+         │
+         └── FloatingActionButton
+```
+
+---
+
+# 6. Where is `Scaffold` Used?
+
+`Scaffold` is normally used to provide the **basic structure of an individual screen**.
+
+For example:
+
+```text
+Application
+│
+└── MaterialApp
+     │
+     ├── Home Screen
+     │    └── Scaffold
+     │
+     ├── Profile Screen
+     │    └── Scaffold
+     │
+     └── Settings Screen
+          └── Scaffold
+```
+
+Each screen can have its own:
+
+* AppBar
+* Body
+* Drawer
+* Floating button
+* Bottom navigation
+
+---
+
+# 7. `MaterialApp` vs `Scaffold`
+
+| Widget                 | Purpose                     |
+| ---------------------- | --------------------------- |
+| `MaterialApp`          | Overall application         |
+| `Scaffold`             | Individual screen structure |
+| `AppBar`               | Top section                 |
+| `body`                 | Main content                |
+| `Drawer`               | Side menu                   |
+| `BottomNavigationBar`  | Bottom navigation           |
+| `FloatingActionButton` | Floating action             |
+
+---
+
+## 8. Real-World Mental Model
+
+Imagine an application as a building:
+
+```text
+MaterialApp
+= Entire building
+
+Scaffold
+= One room
+
+AppBar
+= Top section
+
+body
+= Main space
+
+Drawer
+= Side menu
+
+BottomNavigationBar
+= Bottom control area
+```
+
+---
+
+## 9. Quick Revision
+
+Remember:
+
+**`Scaffold` = basic structure of one screen.**
+
+Important properties:
+
+```dart
+Scaffold(
+  appBar: ...,
+  body: ...,
+  drawer: ...,
+  floatingActionButton: ...,
+  bottomNavigationBar: ...,
+  backgroundColor: ...,
+)
+```
+
+## 10. One-Line Definition
+
+**`Scaffold` is a Flutter widget that provides the standard visual structure and layout areas for a screen.**

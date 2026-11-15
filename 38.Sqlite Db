@@ -1,0 +1,522 @@
+# SQLite — Local Database
+
+## 1. What is a Database?
+
+A database stores **structured data**.
+
+For example, a music app might store:
+
+```text
+id | song       | artist      | duration
+1  | Believer   | Imagine     | 3:24
+2  | Faded      | Alan Walker | 3:32
+3  | Perfect    | Ed Sheeran  | 4:23
+```
+
+Unlike simple key-value storage, a database can store many records and search/filter them efficiently.
+
+---
+
+# 2. SharedPreferences vs SQLite
+
+### SharedPreferences
+
+Best for small settings:
+
+```text
+isLoggedIn → true
+darkMode → true
+username → Rahul
+```
+
+### SQLite
+
+Best for structured collections:
+
+```text
+100 songs
+500 expenses
+1000 products
+notes
+contacts
+```
+
+Easy memory:
+
+```text
+Small settings → SharedPreferences
+
+Many structured records → SQLite
+```
+
+---
+
+# 3. SQLite in Flutter
+
+A commonly used package is:
+
+```text
+sqflite
+```
+
+It allows Flutter to work with SQLite databases.
+
+You also commonly use:
+
+```dart
+import 'package:sqflite/sqflite.dart';
+```
+
+and:
+
+```dart
+import 'package:path/path.dart';
+```
+
+---
+
+# 4. Database Structure
+
+Think of SQLite like this:
+
+```text
+Database
+   ↓
+Tables
+   ↓
+Rows
+   ↓
+Columns
+```
+
+Example:
+
+```text
+Database: music.db
+
+Table: songs
+
+id | name     | artist
+---|----------|--------
+1  | Faded    | Alan Walker
+2  | Believer | Imagine Dragons
+```
+
+---
+
+# 5. Create / Open Database
+
+Basic pattern:
+
+```dart
+final database = await openDatabase(
+  join(await getDatabasesPath(), "app.db"),
+  onCreate: (db, version) {
+    return db.execute(
+      """
+      CREATE TABLE users(
+        id INTEGER PRIMARY KEY,
+        name TEXT,
+        email TEXT
+      )
+      """,
+    );
+  },
+  version: 1,
+);
+```
+
+The important idea is:
+
+```text
+openDatabase()
+       ↓
+Open existing database
+       OR
+Create new database
+```
+
+---
+
+# 6. Table
+
+A table defines what information you store.
+
+Example:
+
+```sql
+CREATE TABLE users(
+  id INTEGER PRIMARY KEY,
+  name TEXT,
+  email TEXT
+)
+```
+
+Think:
+
+```text
+users
+ ├── id
+ ├── name
+ └── email
+```
+
+Each user becomes a row.
+
+---
+
+# 7. Insert Data
+
+After opening the database:
+
+```dart
+await database.insert(
+  "users",
+  {
+    "name": "Rahul",
+    "email": "rahul@gmail.com",
+  },
+);
+```
+
+Now the database contains:
+
+```text
+id | name  | email
+---|-------|----------------
+1  | Rahul | rahul@gmail.com
+```
+
+The database can automatically generate the ID when configured appropriately.
+
+---
+
+# 8. Read Data
+
+Use:
+
+```dart
+final users = await database.query("users");
+```
+
+Now:
+
+```dart
+print(users);
+```
+
+You get a list of maps:
+
+```text
+[
+  {
+    id: 1,
+    name: Rahul,
+    email: rahul@gmail.com
+  }
+]
+```
+
+---
+
+# 9. Display Database Data
+
+This connects directly to your `ListView.builder`.
+
+```dart
+ListView.builder(
+  itemCount: users.length,
+
+  itemBuilder: (context, index) {
+
+    final user = users[index];
+
+    return ListTile(
+      title: Text(user["name"].toString()),
+      subtitle: Text(user["email"].toString()),
+    );
+  },
+)
+```
+
+Flow:
+
+```text
+SQLite
+  ↓
+query()
+  ↓
+List<Map>
+  ↓
+ListView.builder
+  ↓
+UI
+```
+
+---
+
+# 10. Update Data
+
+Suppose we want to change Rahul's email.
+
+```dart
+await database.update(
+  "users",
+  {
+    "email": "rahul123@gmail.com",
+  },
+  where: "id = ?",
+  whereArgs: [1],
+);
+```
+
+The `?` is used with `whereArgs` rather than directly inserting values into the SQL string.
+
+---
+
+# 11. Delete Data
+
+```dart
+await database.delete(
+  "users",
+  where: "id = ?",
+  whereArgs: [1],
+);
+```
+
+This deletes the user whose ID is `1`.
+
+---
+
+# 12. CRUD
+
+These four operations are extremely important.
+
+```text
+C → Create
+R → Read
+U → Update
+D → Delete
+```
+
+In Flutter:
+
+```text
+insert() → Create
+
+query() → Read
+
+update() → Update
+
+delete() → Delete
+```
+
+Remember:
+
+```text
+CRUD = basic database operations
+```
+
+---
+
+# 13. Searching
+
+Suppose we want users whose name is Rahul.
+
+```dart
+final users = await database.query(
+  "users",
+  where: "name = ?",
+  whereArgs: ["Rahul"],
+);
+```
+
+The database returns matching rows.
+
+This becomes useful for:
+
+```text
+Search
+Filtering
+Login data
+Offline records
+```
+
+---
+
+# 14. Model Classes + SQLite
+
+You already learned model classes.
+
+In a real application, you can combine them.
+
+```text
+SQLite
+   ↓
+Map
+   ↓
+User.fromJson()
+   ↓
+User object
+   ↓
+UI
+```
+
+And when saving:
+
+```text
+User object
+   ↓
+toMap()
+   ↓
+SQLite
+```
+
+For SQLite, developers commonly create methods such as:
+
+```dart
+Map<String, dynamic> toMap()
+```
+
+and:
+
+```dart
+factory User.fromMap(Map<String, dynamic> map)
+```
+
+The idea is very similar to `fromJson()` and `toJson()`.
+
+---
+
+# 15. Real Example — Expense App
+
+Imagine an expense tracker.
+
+Table:
+
+```text
+expenses
+
+id | title       | amount | category
+---|-------------|--------|----------
+1  | Lunch       | 150    | Food
+2  | Bus         | 30     | Travel
+3  | Movie       | 250    | Fun
+```
+
+Your app can:
+
+```text
+Add expense
+     ↓
+insert()
+
+Show expenses
+     ↓
+query()
+
+Edit expense
+     ↓
+update()
+
+Delete expense
+     ↓
+delete()
+```
+
+Because the data is stored locally, the app can work without an internet connection.
+
+---
+
+# 16. When Should You Use SQLite?
+
+Use a local database when you need:
+
+* Many records
+* Structured data
+* Searching
+* Filtering
+* Updating records
+* Deleting records
+* Offline functionality
+* Relationships between data
+
+Examples:
+
+```text
+Expense Tracker
+Music Player
+Notes App
+Offline Shopping App
+Contact Manager
+Offline Book Library
+```
+
+---
+
+# 17. SQLite vs SharedPreferences
+
+| SharedPreferences | SQLite              |
+| ----------------- | ------------------- |
+| Simple values     | Structured records  |
+| Key-value         | Tables/rows/columns |
+| Settings          | App data            |
+| Login flag        | Products            |
+| Dark mode         | Expenses            |
+| Username          | Songs               |
+| Very simple       | More powerful       |
+
+### Easy rule
+
+```text
+"Should I remember a setting?"
+        ↓
+SharedPreferences
+
+"Should I store a collection of records?"
+        ↓
+SQLite
+```
+
+---
+
+# 18. Important Things to Remember
+
+You don't need to memorize every SQLite command now.
+
+Remember the architecture:
+
+```text
+Flutter App
+     ↓
+Database
+     ↓
+Table
+     ↓
+CRUD
+```
+
+And the four important operations:
+
+```dart
+insert()
+query()
+update()
+delete()
+```
+
+### Main mental model
+
+```text
+SharedPreferences
+       ↓
+Small key-value data
+
+SQLite
+       ↓
+Large/structured local data
+
+API
+       ↓
+Remote/server data
+```

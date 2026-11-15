@@ -1,0 +1,445 @@
+# Flutter — StatelessWidget, StatefulWidget and setState()
+
+## 1. StatelessWidget
+
+A `StatelessWidget` is a widget whose UI does **not have changing internal state**.
+
+Example:
+
+```dart id="h2k9qa"
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Text("Hello Flutter"),
+      ),
+    );
+  }
+}
+```
+
+The UI is based on the values you give it.
+
+Use `StatelessWidget` when the widget doesn't need to change its own data.
+
+Examples:
+
+* Static text
+* Logo
+* Simple UI section
+* Fixed card
+* Reusable display widget
+
+---
+
+# 2. StatefulWidget
+
+A `StatefulWidget` is used when the UI needs to **change while the app is running**.
+
+Examples:
+
+* Counter
+* Checkbox
+* Switch
+* Text that changes
+* Selected dropdown item
+* Login form state
+* Loading indicator
+* Show/hide password
+
+Basic structure:
+
+```dart id="9p6k2d"
+class CounterScreen extends StatefulWidget {
+  const CounterScreen({super.key});
+
+  @override
+  State<CounterScreen> createState() => _CounterScreenState();
+}
+
+class _CounterScreenState extends State<CounterScreen> {
+
+  int count = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Text("$count"),
+      ),
+    );
+  }
+}
+```
+
+---
+
+# 3. Why are there two classes?
+
+A StatefulWidget normally has:
+
+```text id="4rj8tz"
+StatefulWidget
+      ↓
+createState()
+      ↓
+State class
+      ↓
+build()
+```
+
+For example:
+
+```dart id="1r8h0a"
+class CounterScreen extends StatefulWidget {
+```
+
+This describes the widget.
+
+And:
+
+```dart id="3zq5vs"
+class _CounterScreenState extends State<CounterScreen> {
+```
+
+This stores the **changing data**.
+
+For beginners, remember:
+
+```text
+StatefulWidget
+→ Widget definition
+
+State class
+→ Changing data + UI
+```
+
+---
+
+# 4. What is State?
+
+**State = data that can change while the app is running.**
+
+Example:
+
+```dart id="x8v4mn"
+int count = 0;
+```
+
+Initially:
+
+```text
+count = 0
+```
+
+After clicking a button:
+
+```text
+count = 1
+```
+
+Then:
+
+```text
+count = 2
+```
+
+The value is changing, so it is **state**.
+
+Other examples:
+
+```dart id="7f2q5k"
+bool isDark = false;
+
+bool isLoading = false;
+
+String selectedCountry = "India";
+
+bool isPasswordVisible = false;
+```
+
+All of these can be state.
+
+---
+
+# 5. What is setState()?
+
+`setState()` tells Flutter:
+
+> "My data changed. Rebuild this UI."
+
+Example:
+
+```dart id="f8k3pv"
+setState(() {
+  count++;
+});
+```
+
+The important idea is:
+
+```text
+Change data
+    ↓
+setState()
+    ↓
+Flutter rebuilds UI
+    ↓
+New value appears
+```
+
+---
+
+# 6. Complete Counter Example
+
+```dart id="q5w9ax"
+import 'package:flutter/material.dart';
+
+class CounterScreen extends StatefulWidget {
+  const CounterScreen({super.key});
+
+  @override
+  State<CounterScreen> createState() => _CounterScreenState();
+}
+
+class _CounterScreenState extends State<CounterScreen> {
+
+  int count = 0;
+
+  void increaseCount() {
+    setState(() {
+      count++;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Counter"),
+      ),
+
+      body: Center(
+        child: Text(
+          "$count",
+          style: TextStyle(fontSize: 40),
+        ),
+      ),
+
+      floatingActionButton: FloatingActionButton(
+        onPressed: increaseCount,
+        child: Icon(Icons.add),
+      ),
+    );
+  }
+}
+```
+
+When the button is clicked:
+
+```text
+count = 0
+   ↓
+button
+   ↓
+count++
+   ↓
+setState()
+   ↓
+build() runs again
+   ↓
+count = 1
+```
+
+---
+
+# 7. Why can't we just change the variable?
+
+You might think:
+
+```dart id="2o5j7h"
+count++;
+```
+
+Why do we need:
+
+```dart id="g7t3cx"
+setState(() {
+  count++;
+});
+```
+
+Because Flutter needs to know that the value changed.
+
+Without `setState()`, Flutter may not rebuild the relevant UI.
+
+So:
+
+```text
+count++
+→ Data changes
+
+setState()
+→ Tell Flutter to update UI
+```
+
+---
+
+# 8. Example with Switch
+
+You already learned Switch:
+
+```dart id="x1c8nm"
+bool notifications = false;
+```
+
+When changed:
+
+```dart id="b3y6fd"
+Switch(
+  value: notifications,
+
+  onChanged: (value) {
+    setState(() {
+      notifications = value;
+    });
+  },
+)
+```
+
+Here:
+
+```text
+Switch changes
+      ↓
+notifications changes
+      ↓
+setState()
+      ↓
+UI updates
+```
+
+This is why controls such as:
+
+* Checkbox
+* Radio
+* Switch
+* Dropdown
+
+are commonly used inside a `StatefulWidget`.
+
+---
+
+# 9. Stateless vs Stateful
+
+| StatelessWidget                  | StatefulWidget            |
+| -------------------------------- | ------------------------- |
+| UI doesn't manage changing state | UI manages changing state |
+| Simpler                          | More structure            |
+| No `setState()`                  | Can use `setState()`      |
+| Static display                   | Interactive/dynamic UI    |
+| Example: logo                    | Example: counter          |
+
+### Easy memory
+
+```text
+Nothing changes
+      ↓
+StatelessWidget
+
+Something changes
+      ↓
+StatefulWidget
+      ↓
+setState()
+```
+
+---
+
+# 10. Very Important Rule
+
+`setState()` should normally be called **inside the State class**:
+
+```dart id="z9v5kx"
+class _MyScreenState extends State<MyScreen> {
+
+  bool isLoading = false;
+
+  void changeLoading() {
+    setState(() {
+      isLoading = true;
+    });
+  }
+}
+```
+
+You don't need `setState()` just because you changed a normal local variable.
+
+You use it when the changed value should cause the widget's UI to rebuild.
+
+---
+
+# 11. Real-world examples
+
+### Login
+
+```text
+isLoading = true
+      ↓
+Show CircularProgressIndicator
+```
+
+### Password
+
+```text
+isPasswordVisible = true
+      ↓
+Show password
+```
+
+### Cart
+
+```text
+cartCount = 3
+      ↓
+Cart icon shows 3
+```
+
+### Currency Converter
+
+```text
+selectedCurrency = "USD"
+      ↓
+UI shows USD
+```
+
+### Dark mode
+
+```text
+isDarkMode = true
+      ↓
+UI changes theme
+```
+
+These are all examples of **state changing the UI**.
+
+---
+
+## Remember this flow
+
+```text
+USER ACTION
+    ↓
+DATA CHANGES
+    ↓
+setState()
+    ↓
+build() runs
+    ↓
+UI updates
+```
+
+This is one of the most important Flutter concepts to understand before moving into more advanced topics.

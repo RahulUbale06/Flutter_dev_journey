@@ -1,0 +1,308 @@
+# ThemeData & Dark Mode
+
+## 1. What is Theme?
+
+A **Theme** controls the overall visual style of your Flutter app.
+
+Instead of giving colors separately to every widget, you can define them in one place.
+
+For example:
+
+* Primary color
+* Background color
+* Text colors
+* Button styles
+* AppBar colors
+* Dark mode
+
+---
+
+## 2. Basic Theme
+
+Theme is usually defined inside `MaterialApp`.
+
+```dart
+MaterialApp(
+  theme: ThemeData(
+    colorScheme: ColorScheme.fromSeed(
+      seedColor: Colors.blue,
+    ),
+  ),
+
+  home: HomeScreen(),
+)
+```
+
+Now Flutter can use this theme throughout the app.
+
+---
+
+## 3. Using Theme Colors
+
+Instead of:
+
+```dart
+Text(
+  "Hello",
+  style: TextStyle(
+    color: Colors.blue,
+  ),
+)
+```
+
+You can use the app's theme:
+
+```dart
+Text(
+  "Hello",
+  style: TextStyle(
+    color: Theme.of(context).colorScheme.primary,
+  ),
+)
+```
+
+This is useful because if you change the theme color, the UI can automatically follow it.
+
+---
+
+# 4. Light Theme + Dark Theme
+
+You can define both:
+
+```dart
+MaterialApp(
+  theme: ThemeData(
+    brightness: Brightness.light,
+    colorScheme: ColorScheme.fromSeed(
+      seedColor: Colors.blue,
+    ),
+  ),
+
+  darkTheme: ThemeData(
+    brightness: Brightness.dark,
+    colorScheme: ColorScheme.fromSeed(
+      seedColor: Colors.blue,
+      brightness: Brightness.dark,
+    ),
+  ),
+
+  themeMode: ThemeMode.system,
+
+  home: HomeScreen(),
+)
+```
+
+### `theme`
+
+Light theme.
+
+### `darkTheme`
+
+Dark theme.
+
+### `themeMode`
+
+Controls which theme is used.
+
+---
+
+# 5. ThemeMode
+
+There are three important options:
+
+```dart
+ThemeMode.light
+```
+
+Always use light mode.
+
+```dart
+ThemeMode.dark
+```
+
+Always use dark mode.
+
+```dart
+ThemeMode.system
+```
+
+Follow the phone's light/dark setting.
+
+Example:
+
+```dart
+themeMode: ThemeMode.system,
+```
+
+This is commonly used in real apps.
+
+---
+
+# 6. Manual Dark Mode Switch
+
+You can also allow the user to change the theme.
+
+Example:
+
+```dart
+bool isDark = false;
+```
+
+Then:
+
+```dart
+MaterialApp(
+  theme: ThemeData.light(),
+  darkTheme: ThemeData.dark(),
+
+  themeMode: isDark
+      ? ThemeMode.dark
+      : ThemeMode.light,
+
+  home: HomeScreen(
+    onThemeChanged: () {
+      setState(() {
+        isDark = !isDark;
+      });
+    },
+  ),
+)
+```
+
+The important idea is:
+
+```text
+isDark
+   ↓
+themeMode changes
+   ↓
+MaterialApp rebuilds
+   ↓
+whole app changes theme
+```
+
+---
+
+# 7. Theme in Buttons
+
+Instead of styling every button individually:
+
+```dart
+ElevatedButton(
+  onPressed: () {},
+  child: Text("Login"),
+)
+```
+
+Flutter can use the application's button theme.
+
+You can also customize it:
+
+```dart
+theme: ThemeData(
+  elevatedButtonTheme: ElevatedButtonThemeData(
+    style: ElevatedButton.styleFrom(
+      minimumSize: Size(double.infinity, 50),
+    ),
+  ),
+),
+```
+
+Now your `ElevatedButton`s can share the same style.
+
+---
+
+# 8. Theme in AppBar
+
+```dart
+theme: ThemeData(
+  appBarTheme: AppBarTheme(
+    centerTitle: true,
+  ),
+),
+```
+
+You can define common AppBar styling here instead of repeating it on every screen.
+
+---
+
+# 9. Important Theme Concepts
+
+### `ThemeData`
+
+Defines the application's visual theme.
+
+### `ColorScheme`
+
+Provides a coordinated set of colors.
+
+Common colors:
+
+```dart
+Theme.of(context).colorScheme.primary
+Theme.of(context).colorScheme.secondary
+Theme.of(context).colorScheme.surface
+Theme.of(context).colorScheme.error
+```
+
+### `Theme.of(context)`
+
+Gets the current theme inside a widget.
+
+---
+
+# 10. Where Theme is Used
+
+Theme is especially useful for:
+
+* Login/signup apps
+* E-commerce apps
+* Music players
+* Banking apps
+* Dashboard apps
+* Dark mode
+* Consistent button styling
+* Consistent AppBar styling
+* Consistent colors across many screens
+
+---
+
+# 11. Easy Memory
+
+```text
+ThemeData
+   ↓
+Controls app appearance
+
+theme
+   ↓
+Light mode
+
+darkTheme
+   ↓
+Dark mode
+
+themeMode
+   ↓
+Chooses which theme is active
+
+Theme.of(context)
+   ↓
+Access current theme
+```
+
+## Most important code to remember
+
+```dart
+MaterialApp(
+  theme: ThemeData.light(),
+
+  darkTheme: ThemeData.dark(),
+
+  themeMode: ThemeMode.system,
+
+  home: HomeScreen(),
+)
+```
+
+**Real-app rule:** define common styling in the theme instead of repeating the same styling on every widget.

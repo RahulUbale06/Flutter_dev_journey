@@ -1,0 +1,209 @@
+# SnackBar and Toast
+
+## 1. What is a SnackBar?
+
+`SnackBar` is a small temporary message that appears at the **bottom of the screen**.
+
+Common uses:
+
+* "Saved successfully"
+* "Item deleted"
+* "Copied to clipboard"
+* "Please enter a value"
+* "No internet connection"
+
+Example:
+
+```dart
+ScaffoldMessenger.of(context).showSnackBar(
+  SnackBar(
+    content: Text("Saved successfully"),
+  ),
+);
+```
+
+---
+
+## 2. Complete Example
+
+```dart
+ElevatedButton(
+  onPressed: () {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text("Data saved successfully"),
+      ),
+    );
+  },
+  child: Text("Save"),
+)
+```
+
+When the button is clicked:
+
+```text
+             Screen
+┌─────────────────────────────┐
+│                             │
+│                             │
+│                             │
+│                             │
+│                             │
+├─────────────────────────────┤
+│ Data saved successfully     │
+└─────────────────────────────┘
+```
+
+The message disappears automatically.
+
+---
+
+## 3. Adding an Action
+
+You can give the user a button inside the SnackBar.
+
+```dart
+ScaffoldMessenger.of(context).showSnackBar(
+  SnackBar(
+    content: Text("Item deleted"),
+    action: SnackBarAction(
+      label: "UNDO",
+      onPressed: () {
+        // restore item
+      },
+    ),
+  ),
+);
+```
+
+Result:
+
+```text
+┌──────────────────────────────────┐
+│ Item deleted              UNDO   │
+└──────────────────────────────────┘
+```
+
+This is very common in real apps.
+
+---
+
+## 4. Clearing an Existing SnackBar
+
+If another SnackBar is already showing:
+
+```dart
+ScaffoldMessenger.of(context).hideCurrentSnackBar();
+```
+
+Then show a new one:
+
+```dart
+ScaffoldMessenger.of(context).hideCurrentSnackBar();
+
+ScaffoldMessenger.of(context).showSnackBar(
+  SnackBar(
+    content: Text("New message"),
+  ),
+);
+```
+
+---
+
+# 5. What about Toast?
+
+Flutter itself does **not have a built-in `Toast` widget** like Android's native Toast.
+
+A Toast is usually:
+
+```text
+Small temporary message
+        ↓
+appears briefly
+        ↓
+disappears automatically
+```
+
+For many normal Flutter situations, `SnackBar` is enough.
+
+If you specifically need an Android/iOS-style Toast, you can use a third-party package.
+
+---
+
+## 6. SnackBar vs Toast vs AlertDialog
+
+| Feature            | SnackBar | Toast     | AlertDialog |
+| ------------------ | -------- | --------- | ----------- |
+| Temporary message  | ✅        | ✅         | ❌           |
+| User must respond  | ❌        | ❌         | Usually ✅   |
+| Bottom of screen   | ✅        | Usually   | ❌           |
+| Confirmation       | ❌        | ❌         | ✅           |
+| Undo action        | ✅        | Usually ❌ | Possible    |
+| Built into Flutter | ✅        | ❌         | ✅           |
+
+### Easy memory
+
+```text
+SnackBar    → Inform user
+Toast       → Brief notification
+AlertDialog → Ask user
+```
+
+---
+
+## 7. Real-world examples
+
+### Save
+
+```dart
+SnackBar(
+  content: Text("Profile saved"),
+)
+```
+
+### Delete
+
+```dart
+SnackBar(
+  content: Text("File deleted"),
+  action: SnackBarAction(
+    label: "UNDO",
+    onPressed: () {},
+  ),
+)
+```
+
+### Confirm delete
+
+```dart
+AlertDialog(
+  title: Text("Delete?"),
+  content: Text("Are you sure?"),
+  actions: [
+    TextButton(
+      onPressed: () {},
+      child: Text("Cancel"),
+    ),
+    TextButton(
+      onPressed: () {},
+      child: Text("Delete"),
+    ),
+  ],
+)
+```
+
+---
+
+## 8. What you should remember
+
+For normal Flutter development, remember:
+
+```dart
+ScaffoldMessenger.of(context).showSnackBar(
+  SnackBar(
+    content: Text("Message"),
+  ),
+);
+```
+
+That's the main SnackBar pattern you will use.

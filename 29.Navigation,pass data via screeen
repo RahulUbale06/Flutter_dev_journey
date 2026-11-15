@@ -1,0 +1,363 @@
+# Flutter Navigation & Passing Data — Complete Revision Page
+
+## 1. What is Navigation?
+
+Navigation means moving from one screen to another in an app.
+
+```text
+Home Screen → Details Screen → Profile Screen
+```
+
+Flutter uses `Navigator` to manage screens.
+
+## 2. Navigate to Another Screen — `Navigator.push()`
+
+Use `push()` to open a new screen.
+
+```dart
+Navigator.push(
+  context,
+  MaterialPageRoute(
+    builder: (context) => DetailsScreen(),
+  ),
+);
+```
+
+**Remember:** `push()` opens a new screen and adds it to the navigation stack.
+
+## 3. Return to the Previous Screen — `Navigator.pop()`
+
+```dart
+Navigator.pop(context);
+```
+
+Use it for a back button, close button, or after completing an action.
+
+```dart
+ElevatedButton(
+  onPressed: () {
+    Navigator.pop(context);
+  },
+  child: Text("Go Back"),
+)
+```
+
+The AppBar back arrow and Android back action normally work automatically.
+
+## 4. Create a Separate Screen
+
+Every screen can be a separate widget/class.
+
+```dart
+class DetailsScreen extends StatelessWidget {
+  const DetailsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("Details")),
+      body: Center(
+        child: Text("Details Screen"),
+      ),
+    );
+  }
+}
+```
+
+Keep screens in separate files as your project grows.
+
+## 5. Pass Data to Another Screen
+
+Suppose the Home Screen has a user's name and you want to display it on the Details Screen.
+
+**Step 1: Receive data through the constructor.**
+
+```dart
+class DetailsScreen extends StatelessWidget {
+  final String name;
+
+  const DetailsScreen({
+    super.key,
+    required this.name,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("Details")),
+      body: Center(
+        child: Text("Hello, $name"),
+      ),
+    );
+  }
+}
+```
+
+**Step 2: Pass data while navigating.**
+
+```dart
+Navigator.push(
+  context,
+  MaterialPageRoute(
+    builder: (context) => DetailsScreen(
+      name: "Rahul",
+    ),
+  ),
+);
+```
+
+Output: `Hello, Rahul`
+
+**Remember:** Pass data through constructor parameters.
+
+## 6. Pass Multiple Values
+
+```dart
+Navigator.push(
+  context,
+  MaterialPageRoute(
+    builder: (context) => ProductScreen(
+      name: "Laptop",
+      price: 50000,
+    ),
+  ),
+);
+```
+
+Receive them in the destination screen:
+
+```dart
+final String name;
+final double price;
+
+const ProductScreen({
+  super.key,
+  required this.name,
+  required this.price,
+});
+```
+
+Declare the matching fields and constructor in `ProductScreen`.
+
+## 7. Return Data from a Screen
+
+Sometimes the second screen must return a result to the first screen.
+
+**Destination screen:**
+
+```dart
+Navigator.pop(context, "Selected");
+```
+
+**Previous screen:**
+
+```dart
+final result = await Navigator.push<String>(
+  context,
+  MaterialPageRoute(
+    builder: (context) => const ChoiceScreen(),
+  ),
+);
+
+if (!mounted) return;
+
+if (result != null) {
+  setState(() {
+    message = result;
+  });
+}
+```
+
+The receiving screen must be a `StatefulWidget` if it updates `message` using `setState()`.
+
+**Remember:** `push()` can return a Future; `pop(context, value)` completes it with a result.
+
+## 8. Named Routes
+
+Named routes let you navigate using route names instead of creating a `MaterialPageRoute` each time.
+
+**Define routes in `MaterialApp`:**
+
+```dart
+MaterialApp(
+  initialRoute: '/',
+  routes: {
+    '/': (context) => const HomeScreen(),
+    '/details': (context) => const DetailsScreen(),
+  },
+);
+```
+
+**Navigate:**
+
+```dart
+Navigator.pushNamed(context, '/details');
+```
+
+**Go back:**
+
+```dart
+Navigator.pop(context);
+```
+
+Use named routes when you want centralized route definitions. For complex apps, a routing package may be more suitable.
+
+## 9. Pass Data Using Named Routes
+
+```dart
+Navigator.pushNamed(
+  context,
+  '/details',
+  arguments: "Rahul",
+);
+```
+
+Receive it in the destination screen:
+
+```dart
+final name =
+    ModalRoute.of(context)!.settings.arguments as String;
+```
+
+Use this only when the route and argument types match. For beginners, passing data through a screen's constructor with `MaterialPageRoute` is often easier to understand.
+
+## 10. Replace the Current Screen — `pushReplacement()`
+
+Use this when the user should not return to the current screen with the normal Back action.
+
+```dart
+Navigator.pushReplacement(
+  context,
+  MaterialPageRoute(
+    builder: (context) => const HomeScreen(),
+  ),
+);
+```
+
+Common use: replacing a login screen after successful login. Make sure the destination and authentication flow are correct.
+
+## 11. Remove Previous Screens — `pushAndRemoveUntil()`
+
+Use this when you need to clear earlier screens from the navigation stack.
+
+```dart
+Navigator.pushAndRemoveUntil(
+  context,
+  MaterialPageRoute(
+    builder: (context) => const HomeScreen(),
+  ),
+  (route) => false,
+);
+```
+
+Common use: after login, prevent returning to login using Back. Apply this only when clearing the entire previous stack is intended.
+
+## 12. Bottom Navigation vs Navigator
+
+**Bottom Navigation:** Switches between main app sections, such as Home, Search, and Profile.
+
+**Navigator:** Opens another screen, such as Product Details or Edit Profile.
+
+```text
+Bottom Navigation
+Home | Search | Profile
+
+Tap a product
+       ↓
+Product Details Screen
+       ↓
+Back to previous screen
+```
+
+For many apps, bottom navigation changes the selected section while Navigator handles detail screens.
+
+## 13. Drawer Navigation
+
+A Drawer is a side menu for navigating to sections or other destinations.
+
+```dart
+Scaffold(
+  appBar: AppBar(title: Text("Home")),
+  drawer: Drawer(
+    child: ListView(
+      children: [
+        ListTile(
+          title: Text("Profile"),
+          onTap: () {
+            Navigator.pop(context);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const ProfileScreen(),
+              ),
+            );
+          },
+        ),
+      ],
+    ),
+  ),
+  body: Center(child: Text("Home")),
+);
+```
+
+Close the Drawer before navigating to avoid leaving it open over the destination.
+
+## 14. Important Mistakes to Avoid
+
+```dart
+// ❌ Wrong: destination needs a name argument
+DetailsScreen()
+
+// ✅ Correct
+DetailsScreen(name: "Rahul")
+```
+
+```dart
+// ❌ Risky: assumes the route returned a non-null result
+final String result = await Navigator.push(...);
+
+// ✅ Safer: account for a missing result
+final String? result = await Navigator.push<String>(...);
+```
+
+```dart
+// ❌ Risky after an asynchronous operation if this screen was removed
+await doSomething();
+Navigator.pop(context);
+
+// ✅ Check before using context
+await doSomething();
+if (!context.mounted) return;
+Navigator.pop(context);
+```
+
+Other reminders:
+
+- Don't put every screen inside one giant widget.
+- Don't use `pushReplacement()` when users should be able to return normally.
+- Don't clear the navigation stack unless intended.
+- Don't use `!` on nullable route arguments without checking them.
+- Avoid creating duplicate screens unnecessarily when switching main sections.
+
+## 15. Complete Navigation Flow
+
+```text
+Home Screen
+    ↓ Navigator.push()
+Details Screen (receives data)
+    ↓ Navigator.pop(context, result)
+Home Screen (receives result)
+```
+
+### Quick Revision
+
+- `Navigator.push()` → Open a screen.
+- `Navigator.pop()` → Go back or return a result.
+- `MaterialPageRoute()` → Defines a screen route.
+- Constructor parameters → Pass data to a screen.
+- `await Navigator.push()` → Receive a returned result.
+- `Navigator.pushNamed()` → Navigate using a route name.
+- `Navigator.pushReplacement()` → Replace the current screen.
+- `Navigator.pushAndRemoveUntil()` → Navigate while removing previous routes.
+- `BottomNavigationBar` / `NavigationBar` → Switch main sections.
+- `Drawer` → Open a side navigation menu.

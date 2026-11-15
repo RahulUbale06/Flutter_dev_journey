@@ -1,0 +1,255 @@
+# Flutter — Bottom Navigation
+
+## 1. What is Bottom Navigation?
+
+Bottom navigation lets the user switch between the **main sections of an app**.
+
+Example:
+
+```text
+┌─────────────────────────────┐
+│                             │
+│        Screen content       │
+│                             │
+├─────────────────────────────┤
+│  🏠       🔍       👤       │
+│ Home    Search    Profile   │
+└─────────────────────────────┘
+```
+
+Common sections:
+
+* Home
+* Search
+* Favorites
+* Cart
+* Profile
+
+---
+
+## 2. Modern Flutter: NavigationBar
+
+The important widget to learn is:
+
+```dart
+NavigationBar
+```
+
+It is placed inside:
+
+```dart
+Scaffold(
+  bottomNavigationBar: NavigationBar(...)
+)
+```
+
+---
+
+## 3. Basic Example
+
+```dart
+int selectedIndex = 0;
+
+Scaffold(
+  body: Center(
+    child: Text("Screen $selectedIndex"),
+  ),
+
+  bottomNavigationBar: NavigationBar(
+    selectedIndex: selectedIndex,
+
+    onDestinationSelected: (index) {
+      setState(() {
+        selectedIndex = index;
+      });
+    },
+
+    destinations: [
+      NavigationDestination(
+        icon: Icon(Icons.home),
+        label: "Home",
+      ),
+
+      NavigationDestination(
+        icon: Icon(Icons.search),
+        label: "Search",
+      ),
+
+      NavigationDestination(
+        icon: Icon(Icons.person),
+        label: "Profile",
+      ),
+    ],
+  ),
+)
+```
+
+---
+
+## 4. How `selectedIndex` works
+
+Suppose:
+
+```text
+0 → Home
+1 → Search
+2 → Profile
+```
+
+Initially:
+
+```dart
+int selectedIndex = 0;
+```
+
+So Home is selected.
+
+When the user taps Search:
+
+```dart
+onDestinationSelected: (index) {
+  setState(() {
+    selectedIndex = index;
+  });
+}
+```
+
+`index` becomes `1`.
+
+Flutter rebuilds the UI and Search becomes selected.
+
+---
+
+## 5. Showing Different Screens
+
+Create your screens:
+
+```dart
+final screens = [
+  HomeScreen(),
+  SearchScreen(),
+  ProfileScreen(),
+];
+```
+
+Then:
+
+```dart
+body: screens[selectedIndex],
+```
+
+So:
+
+```text
+selectedIndex = 0
+       ↓
+HomeScreen
+
+selectedIndex = 1
+       ↓
+SearchScreen
+
+selectedIndex = 2
+       ↓
+ProfileScreen
+```
+
+---
+
+## 6. Complete Example
+
+```dart
+int selectedIndex = 0;
+
+final screens = [
+  HomeScreen(),
+  SearchScreen(),
+  ProfileScreen(),
+];
+
+Scaffold(
+  body: screens[selectedIndex],
+
+  bottomNavigationBar: NavigationBar(
+    selectedIndex: selectedIndex,
+
+    onDestinationSelected: (index) {
+      setState(() {
+        selectedIndex = index;
+      });
+    },
+
+    destinations: [
+      NavigationDestination(
+        icon: Icon(Icons.home_outlined),
+        selectedIcon: Icon(Icons.home),
+        label: "Home",
+      ),
+
+      NavigationDestination(
+        icon: Icon(Icons.search_outlined),
+        selectedIcon: Icon(Icons.search),
+        label: "Search",
+      ),
+
+      NavigationDestination(
+        icon: Icon(Icons.person_outline),
+        selectedIcon: Icon(Icons.person),
+        label: "Profile",
+      ),
+    ],
+  ),
+)
+```
+
+---
+
+## 7. Important properties
+
+### `selectedIndex`
+
+Which item is currently selected.
+
+```dart
+selectedIndex: selectedIndex
+```
+
+### `onDestinationSelected`
+
+Runs when the user taps an item.
+
+```dart
+onDestinationSelected: (index) {
+  setState(() {
+    selectedIndex = index;
+  });
+}
+```
+
+### `destinations`
+
+Contains the navigation items.
+
+```dart
+destinations: [
+  NavigationDestination(...),
+  NavigationDestination(...),
+]
+```
+
+---
+
+## 8. Drawer vs Bottom Navigation
+
+```text
+Drawer
+→ Side menu
+→ Many options
+→ Settings, About, Logout, etc.
+
+Bottom Navigation
+→ Main app sections
+→ Home, Search, Profile, etc.
+```
+
+They can also be used **together** in the same application.

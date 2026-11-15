@@ -1,0 +1,506 @@
+# Flutter Component Revision Page — `Stack`
+
+## 1. What is `Stack`?
+
+`Stack` is a layout widget that places multiple widgets **on top of each other**.
+
+### Simple meaning
+
+> `Stack` = Layer widgets over one another.
+
+Unlike:
+
+```text
+Row    → side by side
+Column → one below another
+Stack  → one on top of another
+```
+
+---
+
+# 2. Basic Syntax
+
+```dart
+Stack(
+  children: [
+    Widget1(),
+    Widget2(),
+    Widget3(),
+  ],
+)
+```
+
+`Stack` uses `children` because it can contain multiple widgets.
+
+---
+
+# 3. Simple Example
+
+```dart
+Stack(
+  children: [
+    Container(
+      width: 300,
+      height: 200,
+      color: Colors.blue,
+    ),
+
+    Text("Hello"),
+  ],
+)
+```
+
+The `Text` is placed **over the Container**.
+
+Conceptually:
+
+```text
+┌──────────────────────┐
+│                      │
+│       Hello          │
+│                      │
+└──────────────────────┘
+```
+
+---
+
+# 4. Order of Widgets Matters
+
+The widgets are layered according to their order.
+
+```dart
+Stack(
+  children: [
+    Container(color: Colors.blue),
+    Container(color: Colors.red),
+  ],
+)
+```
+
+The second widget is drawn **on top of** the first.
+
+Think:
+
+```text
+Widget 1 → bottom layer
+Widget 2 → middle layer
+Widget 3 → top layer
+```
+
+So the **last children are generally visually above earlier children**.
+
+---
+
+# 5. Real-World Example — Profile Picture
+
+A common use of `Stack` is a profile picture with an online indicator.
+
+```dart
+Stack(
+  children: [
+    CircleAvatar(
+      radius: 40,
+      backgroundImage: NetworkImage(
+        "https://example.com/profile.jpg",
+      ),
+    ),
+
+    Positioned(
+      right: 0,
+      bottom: 0,
+      child: Container(
+        width: 18,
+        height: 18,
+        decoration: BoxDecoration(
+          color: Colors.green,
+          shape: BoxShape.circle,
+        ),
+      ),
+    ),
+  ],
+)
+```
+
+Conceptually:
+
+```text
+       🟢
+    ┌───────┐
+    │       │
+    │  👤   │
+    │       │
+    └───────┘
+```
+
+The green circle is placed over the profile picture.
+
+---
+
+# 6. `Positioned`
+
+`Positioned` is commonly used **inside `Stack`**.
+
+It lets you control exactly where a child is placed.
+
+Example:
+
+```dart
+Stack(
+  children: [
+    Container(
+      width: 300,
+      height: 200,
+      color: Colors.blue,
+    ),
+
+    Positioned(
+      top: 10,
+      right: 10,
+      child: Icon(Icons.favorite),
+    ),
+  ],
+)
+```
+
+The icon is positioned:
+
+```text
+10 pixels from the top
+10 pixels from the right
+```
+
+---
+
+# 7. Important `Positioned` Properties
+
+```dart
+Positioned(
+  top: 10,
+  bottom: 10,
+  left: 10,
+  right: 10,
+  child: Widget(),
+)
+```
+
+### `top`
+
+Distance from the top.
+
+### `bottom`
+
+Distance from the bottom.
+
+### `left`
+
+Distance from the left.
+
+### `right`
+
+Distance from the right.
+
+You don't have to use all four.
+
+---
+
+# 8. Example — Notification Badge
+
+Imagine a notification icon:
+
+```text
+     ③
+    🔔
+```
+
+You can create it with:
+
+```dart
+Stack(
+  children: [
+    Icon(
+      Icons.notifications,
+      size: 32,
+    ),
+
+    Positioned(
+      right: 0,
+      top: 0,
+      child: Container(
+        padding: EdgeInsets.all(4),
+        decoration: BoxDecoration(
+          color: Colors.red,
+          shape: BoxShape.circle,
+        ),
+        child: Text(
+          "3",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 10,
+          ),
+        ),
+      ),
+    ),
+  ],
+)
+```
+
+This pattern is extremely common in real applications.
+
+---
+
+# 9. `Stack` with Image + Text
+
+You can put text over an image.
+
+```dart
+Stack(
+  children: [
+    Image.network(
+      "https://example.com/image.jpg",
+      width: 300,
+      height: 200,
+      fit: BoxFit.cover,
+    ),
+
+    Positioned(
+      bottom: 10,
+      left: 10,
+      child: Text(
+        "Beautiful Place",
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    ),
+  ],
+)
+```
+
+Result:
+
+```text
+┌─────────────────────────┐
+│                         │
+│        IMAGE            │
+│                         │
+│ Beautiful Place         │
+└─────────────────────────┘
+```
+
+---
+
+# 10. `Stack` Without `Positioned`
+
+You don't always need `Positioned`.
+
+```dart
+Stack(
+  alignment: Alignment.center,
+  children: [
+    Container(
+      width: 200,
+      height: 200,
+      color: Colors.blue,
+    ),
+
+    Icon(
+      Icons.play_arrow,
+      size: 60,
+      color: Colors.white,
+    ),
+  ],
+)
+```
+
+The icon appears in the center of the Container.
+
+---
+
+# 11. `alignment`
+
+`Stack` has an `alignment` property.
+
+```dart
+Stack(
+  alignment: Alignment.center,
+  children: [
+    Container(
+      width: 200,
+      height: 200,
+      color: Colors.blue,
+    ),
+
+    Text("Hello"),
+  ],
+)
+```
+
+The child widgets are aligned according to the specified alignment.
+
+Common values:
+
+```dart
+Alignment.center
+Alignment.topCenter
+Alignment.bottomCenter
+Alignment.centerLeft
+Alignment.centerRight
+Alignment.topLeft
+Alignment.topRight
+Alignment.bottomLeft
+Alignment.bottomRight
+```
+
+---
+
+# 12. Real-World Uses
+
+`Stack` is commonly used for:
+
+* Profile picture + online status
+* Notification badges
+* Text over images
+* Play button over video thumbnail
+* Favorite icon over product image
+* Discount badge
+* Loading overlays
+* Floating elements
+* Image editing interfaces
+* Maps with markers
+* Custom UI decorations
+
+---
+
+# 13. Stack vs Row vs Column
+
+| Widget   | Arrangement         |
+| -------- | ------------------- |
+| `Row`    | Horizontal          |
+| `Column` | Vertical            |
+| `Stack`  | Overlapping/layered |
+
+Think:
+
+```text
+Row
+A   B   C
+```
+
+```text
+Column
+A
+B
+C
+```
+
+```text
+Stack
+┌─────────┐
+│   B     │
+│  ┌───┐  │
+│  │ A │  │
+│  └───┘  │
+└─────────┘
+```
+
+---
+
+# 14. Important Rule
+
+`Positioned` should generally be used as a **direct child of `Stack`**.
+
+Correct:
+
+```dart
+Stack(
+  children: [
+    Positioned(
+      top: 10,
+      right: 10,
+      child: Text("Hello"),
+    ),
+  ],
+)
+```
+
+You don't normally use:
+
+```dart
+Column(
+  children: [
+    Positioned(...),
+  ],
+)
+```
+
+because `Positioned` is specifically designed to work with `Stack`.
+
+---
+
+# 15. Common Mistake
+
+Don't use `Stack` when you simply want widgets side by side.
+
+Use:
+
+```dart
+Row()
+```
+
+Don't use `Stack` when you simply want widgets vertically.
+
+Use:
+
+```dart
+Column()
+```
+
+Use `Stack` when widgets actually need to **overlap or be layered**.
+
+---
+
+# 16. Mental Model
+
+Imagine transparent sheets placed on top of each other:
+
+```text
+Layer 3 → Text
+Layer 2 → Icon
+Layer 1 → Image
+```
+
+`Stack` manages those layers.
+
+---
+
+# 17. Quick Revision
+
+```dart
+Stack(
+  children: [
+    BackgroundWidget(),
+
+    Positioned(
+      top: 10,
+      right: 10,
+      child: ForegroundWidget(),
+    ),
+  ],
+)
+```
+
+### Remember
+
+> **`Row` → side by side**
+
+> **`Column` → one below another**
+
+> **`Stack` → on top of each other**
+
+> **`Positioned` → control the exact position of a Stack child**
+
+### One-line definition
+
+> **`Stack` is a Flutter layout widget that places multiple widgets on top of each other in layers.**

@@ -1,0 +1,351 @@
+# Flutter — Dropdown
+
+## 1. What is a Dropdown?
+
+A dropdown lets the user **select one option from multiple choices**.
+
+Example:
+
+```text
+Country
+┌─────────────────────────┐
+│ India                 ▼ │
+└─────────────────────────┘
+```
+
+When clicked:
+
+```text
+India
+USA
+UK
+Japan
+Germany
+```
+
+---
+
+# 2. `DropdownButton`
+
+Basic example:
+
+```dart id="x8q3fz"
+String selectedCountry = "India";
+
+DropdownButton<String>(
+  value: selectedCountry,
+
+  items: [
+    DropdownMenuItem(
+      value: "India",
+      child: Text("India"),
+    ),
+
+    DropdownMenuItem(
+      value: "USA",
+      child: Text("USA"),
+    ),
+
+    DropdownMenuItem(
+      value: "UK",
+      child: Text("UK"),
+    ),
+  ],
+
+  onChanged: (value) {
+    setState(() {
+      selectedCountry = value!;
+    });
+  },
+)
+```
+
+---
+
+# 3. Why `setState()`?
+
+Suppose the user selects:
+
+```text
+India → USA
+```
+
+We need to update the value displayed by the dropdown.
+
+```dart id="f0shk8"
+setState(() {
+  selectedCountry = value!;
+});
+```
+
+`setState()` tells Flutter:
+
+> "The data changed. Rebuild this part of the UI."
+
+---
+
+# 4. Dynamic Dropdown
+
+Instead of manually writing every option, keep the choices in a list.
+
+```dart id="v7g8d1"
+List<String> countries = [
+  "India",
+  "USA",
+  "UK",
+  "Japan",
+  "Germany",
+];
+```
+
+Then:
+
+```dart id="qf5q2e"
+String selectedCountry = "India";
+```
+
+Build the dropdown dynamically:
+
+```dart id="p3h7w9"
+DropdownButton<String>(
+  value: selectedCountry,
+
+  items: countries.map((country) {
+
+    return DropdownMenuItem(
+      value: country,
+      child: Text(country),
+    );
+
+  }).toList(),
+
+  onChanged: (value) {
+
+    setState(() {
+      selectedCountry = value!;
+    });
+
+  },
+)
+```
+
+The important part is:
+
+```dart id="gq6w7k"
+countries.map(...)
+```
+
+It creates a dropdown item for every country in the list.
+
+---
+
+# 5. `DropdownButtonFormField`
+
+When the dropdown is part of a **Form**, use:
+
+```dart id="9h7b8m"
+DropdownButtonFormField<String>(
+  decoration: InputDecoration(
+    labelText: "Country",
+    border: OutlineInputBorder(),
+  ),
+
+  initialValue: selectedCountry,
+
+  items: countries.map((country) {
+
+    return DropdownMenuItem(
+      value: country,
+      child: Text(country),
+    );
+
+  }).toList(),
+
+  onChanged: (value) {
+
+    setState(() {
+      selectedCountry = value!;
+    });
+
+  },
+)
+```
+
+This gives the dropdown the same form-friendly appearance as `TextFormField`.
+
+---
+
+# 6. Dropdown + Form Validation
+
+You can also validate it:
+
+```dart id="prg5cy"
+DropdownButtonFormField<String>(
+  decoration: InputDecoration(
+    labelText: "Country",
+    border: OutlineInputBorder(),
+  ),
+
+  items: countries.map((country) {
+
+    return DropdownMenuItem(
+      value: country,
+      child: Text(country),
+    );
+
+  }).toList(),
+
+  onChanged: (value) {
+    selectedCountry = value;
+  },
+
+  validator: (value) {
+
+    if (value == null) {
+      return "Please select a country";
+    }
+
+    return null;
+  },
+)
+```
+
+So your form can contain:
+
+```text id="c7i7e3"
+Form
+ │
+ ├── TextFormField
+ │
+ ├── TextFormField
+ │
+ ├── DropdownButtonFormField
+ │
+ └── Submit Button
+```
+
+---
+
+# 7. Dropdown with Objects
+
+In real apps, your data often contains more than just a string.
+
+For example:
+
+```dart id="3pj4yx"
+List<Map<String, String>> countries = [
+  {
+    "name": "India",
+    "code": "+91",
+  },
+  {
+    "name": "USA",
+    "code": "+1",
+  },
+  {
+    "name": "UK",
+    "code": "+44",
+  },
+];
+```
+
+You can display the name:
+
+```dart id="5y2w1h"
+DropdownButton<Map<String, String>>(
+  value: selectedCountry,
+
+  items: countries.map((country) {
+
+    return DropdownMenuItem(
+      value: country,
+      child: Text(
+        "${country["name"]} (${country["code"]})",
+      ),
+    );
+
+  }).toList(),
+
+  onChanged: (value) {
+    setState(() {
+      selectedCountry = value!;
+    });
+  },
+)
+```
+
+This pattern is useful for things like:
+
+```text
+Country → name + code + flag
+Currency → name + symbol + code
+Category → name + id
+```
+
+---
+
+# 8. Important Difference
+
+### `DropdownButton`
+
+Use when you simply need a dropdown.
+
+```dart
+DropdownButton(...)
+```
+
+### `DropdownButtonFormField`
+
+Use when the dropdown is part of a form and you want things like:
+
+```text
+validation
+label
+border
+error message
+```
+
+For forms, remember:
+
+**`DropdownButtonFormField`**
+
+---
+
+# 9. Common Real-World Uses
+
+Dropdowns are commonly used for:
+
+* Country selection
+* State selection
+* City selection
+* Gender
+* Category
+* Currency
+* Language
+* Sort options
+* Payment method
+* Education level
+
+---
+
+# 10. Mental Model
+
+```text id="8m4j5c"
+List of options
+      ↓
+Dropdown
+      ↓
+User selects one
+      ↓
+onChanged()
+      ↓
+selected value changes
+      ↓
+setState()
+      ↓
+UI updates
+```
+
+## One-line revision
+
+**A dropdown allows the user to select one option from a list; use `DropdownButton` for a normal dropdown and `DropdownButtonFormField` when it is part of a form.**

@@ -1,0 +1,591 @@
+# Flutter Components — `Row` & `Column`
+
+## 1. What are Row and Column?
+
+`Row` and `Column` are **layout widgets** used to arrange multiple widgets.
+
+* `Row` → arranges widgets **horizontally** → left to right
+* `Column` → arranges widgets **vertically** → top to bottom
+
+### Simple mental model
+
+```text
+Row
+
+[ Text ] [ Icon ] [ Button ]
+   →       →         →
+```
+
+```text
+Column
+
+Text
+ ↓
+Icon
+ ↓
+Button
+```
+
+---
+
+# 2. Basic Syntax
+
+### Row
+
+```dart
+Row(
+  children: [
+    Text("Name"),
+    Text("Age"),
+    Icon(Icons.person),
+  ],
+)
+```
+
+### Column
+
+```dart
+Column(
+  children: [
+    Text("Name"),
+    Text("Age"),
+    Icon(Icons.person),
+  ],
+)
+```
+
+Both use:
+
+```dart
+children: []
+```
+
+because they can contain **multiple widgets**.
+
+---
+
+# 3. Row Example
+
+```dart
+Scaffold(
+  body: Row(
+    children: [
+      Text("Home"),
+      Icon(Icons.home),
+      Text("Profile"),
+    ],
+  ),
+)
+```
+
+Result conceptually:
+
+```text
+Home    🏠    Profile
+```
+
+The widgets are placed horizontally.
+
+---
+
+# 4. Column Example
+
+```dart
+Scaffold(
+  body: Column(
+    children: [
+      Text("Home"),
+      Icon(Icons.home),
+      Text("Profile"),
+    ],
+  ),
+)
+```
+
+Result:
+
+```text
+Home
+ 🏠
+Profile
+```
+
+The widgets are placed vertically.
+
+---
+
+# 5. Main Axis and Cross Axis
+
+This is **very important** for Flutter layouts.
+
+## Row
+
+For a `Row`:
+
+```text
+Main Axis   → horizontal
+Cross Axis  ↓ vertical
+```
+
+```text
+        Main Axis →
+    ┌──────────────────┐
+    │ A   B   C        │
+    │                  │
+    └──────────────────┘
+        ↑
+     Cross Axis
+```
+
+## Column
+
+For a `Column`:
+
+```text
+Main Axis   ↓ vertical
+Cross Axis  → horizontal
+```
+
+```text
+       Cross Axis →
+    ┌──────────────┐
+    │      A       │
+    │      ↓       │
+    │      B       │
+    │      ↓       │
+    │      C       │
+    └──────────────┘
+       Main Axis
+```
+
+### Remember
+
+> **Row → main axis = horizontal**
+
+> **Column → main axis = vertical**
+
+---
+
+# 6. `mainAxisAlignment`
+
+Controls how children are positioned along the **main axis**.
+
+### Row
+
+```dart
+Row(
+  mainAxisAlignment: MainAxisAlignment.center,
+  children: [
+    Text("A"),
+    Text("B"),
+    Text("C"),
+  ],
+)
+```
+
+The widgets move toward the horizontal center.
+
+### Column
+
+```dart
+Column(
+  mainAxisAlignment: MainAxisAlignment.center,
+  children: [
+    Text("A"),
+    Text("B"),
+    Text("C"),
+  ],
+)
+```
+
+The widgets move toward the vertical center.
+
+---
+
+# 7. Important `mainAxisAlignment` Values
+
+```dart
+MainAxisAlignment.start
+```
+
+Start:
+
+```text
+A B C
+```
+
+```dart
+MainAxisAlignment.center
+```
+
+Center:
+
+```text
+      A B C
+```
+
+```dart
+MainAxisAlignment.end
+```
+
+End:
+
+```text
+          A B C
+```
+
+### `spaceBetween`
+
+```dart
+MainAxisAlignment.spaceBetween
+```
+
+```text
+A             B             C
+```
+
+Space is placed **between** the children.
+
+### `spaceAround`
+
+```dart
+MainAxisAlignment.spaceAround
+```
+
+Space is placed around each child.
+
+### `spaceEvenly`
+
+```dart
+MainAxisAlignment.spaceEvenly
+```
+
+Equal spacing is created between and around the children.
+
+---
+
+# 8. `crossAxisAlignment`
+
+Controls the children along the **cross axis**.
+
+Example:
+
+```dart
+Row(
+  crossAxisAlignment: CrossAxisAlignment.center,
+  children: [
+    Text("Hello"),
+    Icon(Icons.home),
+  ],
+)
+```
+
+For a `Row`, cross axis is **vertical**.
+
+For a `Column`, cross axis is **horizontal**.
+
+Important values:
+
+```dart
+CrossAxisAlignment.start
+CrossAxisAlignment.center
+CrossAxisAlignment.end
+CrossAxisAlignment.stretch
+```
+
+---
+
+# 9. Row + Column Together
+
+In real applications, you will frequently **nest** them.
+
+Example:
+
+```dart
+Column(
+  children: [
+    Text("User Profile"),
+
+    Row(
+      children: [
+        Icon(Icons.person),
+        Text("John"),
+      ],
+    ),
+
+    Row(
+      children: [
+        Icon(Icons.email),
+        Text("john@gmail.com"),
+      ],
+    ),
+  ],
+)
+```
+
+Structure:
+
+```text
+Column
+│
+├── Text
+│
+├── Row
+│   ├── Icon
+│   └── Text
+│
+└── Row
+    ├── Icon
+    └── Text
+```
+
+This is how complex Flutter screens are built.
+
+---
+
+# 10. Real-World Example — Product Information
+
+```dart
+Column(
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    Text(
+      "iPhone 17",
+      style: TextStyle(
+        fontSize: 22,
+        fontWeight: FontWeight.bold,
+      ),
+    ),
+
+    SizedBox(height: 8),
+
+    Row(
+      children: [
+        Text("₹79,999"),
+        SizedBox(width: 15),
+        Text("4.5 ⭐"),
+      ],
+    ),
+  ],
+)
+```
+
+Result:
+
+```text
+iPhone 17
+
+₹79,999     4.5 ⭐
+```
+
+Here:
+
+* `Column` → puts title above product information
+* `Row` → puts price and rating beside each other
+
+---
+
+# 11. `Row` for Horizontal UI
+
+Common uses:
+
+* Icon + text
+* Profile information
+* Price + rating
+* Buttons beside each other
+* Navigation items
+* Search bar + icon
+* Country + flag
+* Currency converter fields
+
+Example:
+
+```dart
+Row(
+  children: [
+    Icon(Icons.flag),
+    SizedBox(width: 8),
+    Text("India"),
+  ],
+)
+```
+
+---
+
+# 12. `Column` for Vertical UI
+
+Common uses:
+
+* Login forms
+* Registration forms
+* Profile screens
+* Settings
+* Product details
+* Text + buttons
+* Multiple input fields
+
+Example:
+
+```dart
+Column(
+  children: [
+    TextField(),
+    TextField(),
+    ElevatedButton(
+      onPressed: () {},
+      child: Text("Login"),
+    ),
+  ],
+)
+```
+
+---
+
+# 13. `Row` Overflow Problem
+
+A `Row` tries to keep its children on one horizontal line.
+
+For example:
+
+```dart
+Row(
+  children: [
+    Text("Very very very long text..."),
+    Text("Another long text..."),
+    Text("More text..."),
+  ],
+)
+```
+
+This can cause:
+
+```text
+A RenderFlex overflowed...
+```
+
+The common solution is to use `Expanded` or `Flexible` when appropriate.
+
+Example:
+
+```dart
+Row(
+  children: [
+    Expanded(
+      child: Text(
+        "Very long text that needs available space",
+      ),
+    ),
+    Icon(Icons.more_vert),
+  ],
+)
+```
+
+We'll learn `Expanded` separately because it is **very important**.
+
+---
+
+# 14. Row vs Column
+
+| Feature           | Row             | Column           |
+| ----------------- | --------------- | ---------------- |
+| Direction         | Horizontal      | Vertical         |
+| Main axis         | Horizontal      | Vertical         |
+| Cross axis        | Vertical        | Horizontal       |
+| Multiple children | Yes             | Yes              |
+| Uses `children`   | Yes             | Yes              |
+| Common use        | Side-by-side UI | Top-to-bottom UI |
+
+---
+
+# 15. Most Important Rules to Remember
+
+### Rule 1
+
+```dart
+Row
+```
+
+→ horizontal
+
+### Rule 2
+
+```dart
+Column
+```
+
+→ vertical
+
+### Rule 3
+
+For Row:
+
+```text
+mainAxis = horizontal
+crossAxis = vertical
+```
+
+### Rule 4
+
+For Column:
+
+```text
+mainAxis = vertical
+crossAxis = horizontal
+```
+
+### Rule 5
+
+Multiple widgets:
+
+```dart
+children: []
+```
+
+Single widget:
+
+```dart
+child:
+```
+
+---
+
+# 16. Quick Revision
+
+```dart
+Row(
+  children: [
+    Widget1(),
+    Widget2(),
+  ],
+)
+```
+
+means:
+
+```text
+Widget1   Widget2
+```
+
+While:
+
+```dart
+Column(
+  children: [
+    Widget1(),
+    Widget2(),
+  ],
+)
+```
+
+means:
+
+```text
+Widget1
+Widget2
+```
+
+### One-line definitions
+
+> **Row** arranges multiple widgets horizontally.
+
+> **Column** arranges multiple widgets vertically.

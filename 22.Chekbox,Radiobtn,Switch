@@ -1,0 +1,409 @@
+# Flutter — Checkbox, Radio & Switch
+
+These widgets allow users to **select, enable, or disable options**.
+
+---
+
+# 1. Checkbox
+
+A checkbox is used when the user can select **multiple independent options**.
+
+Example:
+
+```text id="x5w8kj"
+☑ Java
+☐ Python
+☑ Flutter
+```
+
+The user can select both Java **and** Flutter.
+
+### Basic code
+
+```dart id="t2q3m8"
+bool isChecked = false;
+
+Checkbox(
+  value: isChecked,
+
+  onChanged: (value) {
+    setState(() {
+      isChecked = value!;
+    });
+  },
+)
+```
+
+---
+
+# 2. Checkbox with Text
+
+Usually we put it inside a `Row`:
+
+```dart id="7r4g0d"
+Row(
+  children: [
+
+    Checkbox(
+      value: isChecked,
+
+      onChanged: (value) {
+        setState(() {
+          isChecked = value!;
+        });
+      },
+    ),
+
+    Text("I agree to the terms"),
+  ],
+)
+```
+
+Common use:
+
+```text id="d1y6a8"
+☑ I agree to Terms & Conditions
+☑ Remember me
+☑ Receive notifications
+```
+
+---
+
+# 3. CheckboxListTile
+
+For a cleaner layout, Flutter provides:
+
+```dart id="q0g4ne"
+CheckboxListTile(
+  title: Text("Remember me"),
+
+  value: isChecked,
+
+  onChanged: (value) {
+    setState(() {
+      isChecked = value!;
+    });
+  },
+)
+```
+
+This automatically creates a row with the checkbox and text.
+
+---
+
+# 4. Radio
+
+A Radio button is used when the user must select **one option from a group**.
+
+Example:
+
+```text id="1j8c6r"
+○ Male
+● Female
+○ Other
+```
+
+Only one option can be selected.
+
+### Basic idea
+
+```dart id="l4z7a2"
+String gender = "Male";
+```
+
+Then:
+
+```dart id="u4z1hc"
+Radio<String>(
+  value: "Male",
+  groupValue: gender,
+
+  onChanged: (value) {
+    setState(() {
+      gender = value!;
+    });
+  },
+)
+```
+
+Another option:
+
+```dart id="x1t7w0"
+Radio<String>(
+  value: "Female",
+  groupValue: gender,
+
+  onChanged: (value) {
+    setState(() {
+      gender = value!;
+    });
+  },
+)
+```
+
+Because both use the same:
+
+```dart
+groupValue: gender
+```
+
+only one can be selected.
+
+---
+
+# 5. RadioListTile
+
+Instead of manually creating a Row:
+
+```dart id="a9e8v4"
+RadioListTile<String>(
+  title: Text("Male"),
+
+  value: "Male",
+
+  groupValue: gender,
+
+  onChanged: (value) {
+    setState(() {
+      gender = value!;
+    });
+  },
+)
+```
+
+Another:
+
+```dart id="n5g2e1"
+RadioListTile<String>(
+  title: Text("Female"),
+
+  value: "Female",
+
+  groupValue: gender,
+
+  onChanged: (value) {
+    setState(() {
+      gender = value!;
+    });
+  },
+)
+```
+
+---
+
+# 6. Switch
+
+A switch is used for **on/off settings**.
+
+Example:
+
+```text id="z8k3qt"
+Notifications     [ ON ]
+Dark Mode          [ OFF ]
+Wi-Fi              [ ON ]
+```
+
+### Basic code
+
+```dart id="v6f2y8"
+bool notifications = false;
+
+Switch(
+  value: notifications,
+
+  onChanged: (value) {
+    setState(() {
+      notifications = value;
+    });
+  },
+)
+```
+
+---
+
+# 7. SwitchListTile
+
+This is commonly used for settings screens:
+
+```dart id="4s6d8p"
+SwitchListTile(
+  title: Text("Notifications"),
+
+  value: notifications,
+
+  onChanged: (value) {
+    setState(() {
+      notifications = value;
+    });
+  },
+)
+```
+
+Example settings screen:
+
+```text id="t8q4k2"
+Settings
+
+Notifications          [ ON ]
+
+Dark Mode              [ OFF ]
+
+Auto Download          [ ON ]
+```
+
+---
+
+# 8. Main Difference
+
+This is the most important thing to remember:
+
+| Widget     | Purpose             | Selection |
+| ---------- | ------------------- | --------- |
+| `Checkbox` | Independent option  | Multiple  |
+| `Radio`    | Choose one option   | One       |
+| `Switch`   | Turn setting on/off | On / Off  |
+
+### Easy memory
+
+```text id="r5b8w1"
+Checkbox
+   ↓
+Can select MANY
+
+Radio
+   ↓
+Select ONE from a group
+
+Switch
+   ↓
+ON / OFF
+```
+
+---
+
+# 9. Real-World Examples
+
+### Checkbox
+
+```text id="m7v3p1"
+☑ Pizza
+☑ Burger
+☐ Pasta
+```
+
+Multiple choices are possible.
+
+### Radio
+
+```text id="s6n2ka"
+● Cash
+○ UPI
+○ Card
+```
+
+Only one payment method.
+
+### Switch
+
+```text id="g4d9xp"
+Dark Mode       [ ON ]
+```
+
+Turns a setting on or off.
+
+---
+
+# 10. Important Pattern
+
+All three generally follow the same idea:
+
+```text id="b6q0hy"
+Current value
+      ↓
+Widget displays value
+      ↓
+User interacts
+      ↓
+onChanged()
+      ↓
+setState()
+      ↓
+Value changes
+      ↓
+UI rebuilds
+```
+
+Example:
+
+```dart id="j8n1cw"
+bool isEnabled = false;
+
+Switch(
+  value: isEnabled,
+
+  onChanged: (value) {
+
+    setState(() {
+      isEnabled = value;
+    });
+
+  },
+)
+```
+
+---
+
+## One-line revision
+
+**Checkbox allows multiple selections, Radio allows one selection from a group, and Switch represents an ON/OFF setting.**
+
+
+Dynamic Checkbox
+List<String> skills = [
+  "Flutter",
+  "Python",
+  "SQL",
+  "Java",
+];
+
+Map<String, bool> selectedSkills = {};
+
+Column(
+  children: skills.map((skill) {
+    return CheckboxListTile(
+      title: Text(skill),
+      value: selectedSkills[skill] ?? false,
+      onChanged: (value) {
+        setState(() {
+          selectedSkills[skill] = value!;
+        });
+      },
+    );
+  }).toList(),
+)
+
+
+
+Dynamic RadioButton
+List<String> genders = [
+  "Male",
+  "Female",
+  "Other",
+];
+
+String selectedGender = "Male";
+
+Column(
+  children: genders.map((gender) {
+    return RadioListTile<String>(
+      title: Text(gender),
+      value: gender,
+      groupValue: selectedGender,
+      onChanged: (value) {
+        setState(() {
+          selectedGender = value!;
+        });
+      },
+    );
+  }).toList(),
+)

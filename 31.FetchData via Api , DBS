@@ -1,0 +1,420 @@
+# Flutter — FutureBuilder
+
+## 1. What is FutureBuilder?
+
+`FutureBuilder` is used when you have to **wait for some data or operation to finish** and then update the UI.
+
+Common examples:
+
+* Fetch data from an API
+* Read data from a database
+* Load data from a file
+* Perform an asynchronous operation
+
+Think:
+
+```text
+Start operation
+      ↓
+Waiting...
+      ↓
+Data received
+      ↓
+Show data
+```
+
+---
+
+## 2. What is a Future?
+
+A `Future` represents a value that will be available **later**.
+
+Example:
+
+```dart id="4k2n8p"
+Future<String> getData() async {
+  return "Hello";
+}
+```
+
+The function doesn't immediately give you the final result.
+
+It will give the result later.
+
+---
+
+# 3. Basic FutureBuilder
+
+```dart id="8v3m1q"
+FutureBuilder<String>(
+  future: getData(),
+
+  builder: (context, snapshot) {
+
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return CircularProgressIndicator();
+    }
+
+    return Text(snapshot.data ?? "");
+  },
+)
+```
+
+The important parts are:
+
+```text id="m6q2ya"
+future
+  ↓
+operation to perform
+
+builder
+  ↓
+build UI based on result
+
+snapshot
+  ↓
+contains current result/status
+```
+
+---
+
+# 4. `connectionState`
+
+The most important states are:
+
+### Waiting
+
+```dart id="c8r5vx"
+ConnectionState.waiting
+```
+
+The operation hasn't finished.
+
+Usually show:
+
+```dart id="t2m7qa"
+CircularProgressIndicator()
+```
+
+---
+
+### Done
+
+```dart id="v9k3hm"
+ConnectionState.done
+```
+
+The operation has finished.
+
+Now you can show the data.
+
+---
+
+# 5. `snapshot.data`
+
+After the Future completes:
+
+```dart id="j5q8bn"
+snapshot.data
+```
+
+contains the returned data.
+
+Example:
+
+```dart id="f4m7xc"
+Future<String> getData() async {
+  return "Flutter";
+}
+```
+
+Then:
+
+```dart id="r8n2pk"
+Text(snapshot.data ?? "")
+```
+
+displays:
+
+```text
+Flutter
+```
+
+---
+
+# 6. Error Handling
+
+A Future can fail.
+
+For example, an API may have no internet connection.
+
+Check:
+
+```dart id="y6p3mv"
+if (snapshot.hasError) {
+  return Text("Something went wrong");
+}
+```
+
+A common structure is:
+
+```dart id="q1z8kd"
+FutureBuilder<String>(
+  future: getData(),
+
+  builder: (context, snapshot) {
+
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return CircularProgressIndicator();
+    }
+
+    if (snapshot.hasError) {
+      return Text("Error occurred");
+    }
+
+    return Text(snapshot.data ?? "");
+  },
+)
+```
+
+---
+
+# 7. Complete Example
+
+```dart id="w4m9cs"
+Future<String> getUserName() async {
+  await Future.delayed(
+    Duration(seconds: 2),
+  );
+
+  return "Rahul";
+}
+```
+
+Use it:
+
+```dart id="n7x2qa"
+FutureBuilder<String>(
+  future: getUserName(),
+
+  builder: (context, snapshot) {
+
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return CircularProgressIndicator();
+    }
+
+    if (snapshot.hasError) {
+      return Text("Error");
+    }
+
+    return Text(
+      "Hello ${snapshot.data}",
+    );
+  },
+)
+```
+
+Flow:
+
+```text id="g3k8wp"
+getUserName()
+      ↓
+Waiting for 2 seconds
+      ↓
+CircularProgressIndicator
+      ↓
+"Rahul" received
+      ↓
+Hello Rahul
+```
+
+---
+
+# 8. API Example
+
+This becomes especially useful when you start working with APIs.
+
+Imagine:
+
+```text id="z7m4pc"
+Flutter App
+     ↓
+API request
+     ↓
+Internet
+     ↓
+Server
+     ↓
+JSON data
+     ↓
+Flutter UI
+```
+
+`FutureBuilder` can manage the UI while waiting for the API.
+
+For example:
+
+```dart id="c9v5rk"
+Future<List<String>> getProducts() async {
+  // API call
+  return ["Laptop", "Phone", "Tablet"];
+}
+```
+
+Then:
+
+```dart id="s2k7qa"
+FutureBuilder<List<String>>(
+  future: getProducts(),
+
+  builder: (context, snapshot) {
+
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return CircularProgressIndicator();
+    }
+
+    if (snapshot.hasError) {
+      return Text("Failed to load products");
+    }
+
+    final products = snapshot.data!;
+
+    return ListView.builder(
+      itemCount: products.length,
+
+      itemBuilder: (context, index) {
+        return ListTile(
+          title: Text(products[index]),
+        );
+      },
+    );
+  },
+)
+```
+
+This is a very common pattern.
+
+---
+
+# 9. Important warning
+
+Avoid doing this directly inside `build()` for a real API request:
+
+```dart
+future: getProducts(),
+```
+
+without considering that `build()` can run multiple times, which may cause the Future to be recreated and the operation to run repeatedly.
+
+For important API work, it is often better to create/store the Future in `initState()`.
+
+Example:
+
+```dart id="u8k2mz"
+late Future<List<String>> productsFuture;
+
+@override
+void initState() {
+  super.initState();
+
+  productsFuture = getProducts();
+}
+```
+
+Then:
+
+```dart id="v5q9xc"
+FutureBuilder<List<String>>(
+  future: productsFuture,
+  builder: (context, snapshot) {
+    // UI
+  },
+)
+```
+
+---
+
+# 10. FutureBuilder vs setState
+
+Both can update UI, but they solve different problems.
+
+### `setState`
+
+You already have the data and want to tell Flutter:
+
+```text
+"My state changed."
+```
+
+Example:
+
+```dart
+setState(() {
+  count++;
+});
+```
+
+### `FutureBuilder`
+
+You are waiting for an asynchronous operation:
+
+```text
+"Give me the UI for loading,
+success, or error."
+```
+
+Example:
+
+```dart
+FutureBuilder(
+  future: getProducts(),
+  builder: ...
+)
+```
+
+---
+
+# 11. Memory trick
+
+```text
+Future
+→ Data will come later
+
+FutureBuilder
+→ Build UI based on that Future
+
+waiting
+→ Show loading
+
+done
+→ Show data
+
+hasError
+→ Show error
+
+snapshot.data
+→ Actual returned data
+```
+
+### Main pattern to remember
+
+```dart
+FutureBuilder(
+  future: someFuture(),
+
+  builder: (context, snapshot) {
+
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return CircularProgressIndicator();
+    }
+
+    if (snapshot.hasError) {
+      return Text("Error");
+    }
+
+    return Text("${snapshot.data}");
+  },
+)
+```
+
+This is one of the important Flutter concepts for **API and asynchronous data handling**.

@@ -1,0 +1,287 @@
+# Flutter — FloatingActionButton (FAB)
+
+## 1. What is FloatingActionButton?
+
+`FloatingActionButton` is a circular button that **floats above the screen**, usually near the bottom-right corner.
+
+Common uses:
+
+* Add item
+* Create new note
+* Compose message
+* Start an action
+* Add product
+* Upload something
+
+Example:
+
+```dart id="d2h8pm"
+Scaffold(
+  body: Center(
+    child: Text("Home"),
+  ),
+
+  floatingActionButton: FloatingActionButton(
+    onPressed: () {
+      print("Add clicked");
+    },
+    child: Icon(Icons.add),
+  ),
+)
+```
+
+Result:
+
+```text id="m7b4qa"
+┌──────────────────────────┐
+│                          │
+│        Home              │
+│                          │
+│                    (+)   │
+└──────────────────────────┘
+```
+
+---
+
+## 2. Where do we add it?
+
+Just like Drawer and Bottom Navigation, FAB is added to the **Scaffold**:
+
+```dart id="w7m3hf"
+Scaffold(
+  appBar: AppBar(),
+
+  body: ...,
+
+  floatingActionButton: FloatingActionButton(
+    onPressed: () {},
+    child: Icon(Icons.add),
+  ),
+)
+```
+
+It is **not** placed inside `AppBar`.
+
+---
+
+## 3. `onPressed`
+
+This is what happens when the user taps the FAB.
+
+```dart id="q8k3vp"
+onPressed: () {
+  print("Button clicked");
+},
+```
+
+If you set:
+
+```dart id="z2m7qa"
+onPressed: null,
+```
+
+the button becomes disabled.
+
+---
+
+## 4. `child`
+
+Usually an Icon:
+
+```dart id="s9p4wx"
+child: Icon(Icons.add),
+```
+
+Other examples:
+
+```dart id="j3k7vb"
+Icon(Icons.edit)
+Icon(Icons.delete)
+Icon(Icons.camera_alt)
+Icon(Icons.add)
+```
+
+---
+
+## 5. FAB with Navigation
+
+You can use it to open another screen:
+
+```dart id="m5r8cn"
+floatingActionButton: FloatingActionButton(
+  onPressed: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AddProductScreen(),
+      ),
+    );
+  },
+
+  child: Icon(Icons.add),
+),
+```
+
+Flow:
+
+```text id="x8f2qm"
+FAB
+ ↓
+onPressed
+ ↓
+Navigator.push()
+ ↓
+Add Product Screen
+```
+
+---
+
+## 6. `FloatingActionButton.extended`
+
+If you want an icon **and text**:
+
+```dart id="r4n8kc"
+FloatingActionButton.extended(
+  onPressed: () {},
+
+  icon: Icon(Icons.add),
+
+  label: Text("Add"),
+)
+```
+
+Result:
+
+```text id="2d7pqa"
+      ┌──────────────┐
+      │  +  Add      │
+      └──────────────┘
+```
+
+This is useful when the action needs to be more descriptive.
+
+---
+
+## 7. FAB with Bottom Navigation
+
+You can use both together:
+
+```dart id="q6m1vs"
+Scaffold(
+  body: HomeScreen(),
+
+  bottomNavigationBar: NavigationBar(
+    destinations: [
+      NavigationDestination(
+        icon: Icon(Icons.home),
+        label: "Home",
+      ),
+      NavigationDestination(
+        icon: Icon(Icons.person),
+        label: "Profile",
+      ),
+    ],
+  ),
+
+  floatingActionButton: FloatingActionButton(
+    onPressed: () {},
+    child: Icon(Icons.add),
+  ),
+)
+```
+
+The structure becomes:
+
+```text id="u4n9fk"
+┌──────────────────────────┐
+│                          │
+│       Screen             │
+│                    (+)   │
+├──────────────────────────┤
+│  Home          Profile   │
+└──────────────────────────┘
+```
+
+---
+
+## 8. Important properties
+
+The main ones you should remember:
+
+```text id="a7q3mv"
+floatingActionButton
+        ↓
+Places FAB in Scaffold
+
+onPressed
+        ↓
+What happens when clicked
+
+child
+        ↓
+Icon/content inside FAB
+
+FloatingActionButton.extended
+        ↓
+FAB with icon + text
+```
+
+---
+
+## 9. Real-world examples
+
+### Notes app
+
+```dart id="q4s7mz"
+child: Icon(Icons.add)
+```
+
+→ Create a new note.
+
+### Music app
+
+```dart id="f6j2px"
+child: Icon(Icons.play_arrow)
+```
+
+→ Start playing.
+
+### Shopping app
+
+```dart id="k8r1wd"
+child: Icon(Icons.add_shopping_cart)
+```
+
+→ Add something.
+
+### Camera app
+
+```dart id="b5m9qa"
+child: Icon(Icons.camera_alt)
+```
+
+→ Open camera.
+
+---
+
+## Remember
+
+```text id="p2k8vr"
+FAB
+ ↓
+Floating main action
+
+Scaffold
+ ↓
+floatingActionButton:
+
+onPressed
+ ↓
+action
+
+child
+ ↓
+icon/content
+```
+
+**FAB = a prominent floating action button, usually for the screen's main action.**

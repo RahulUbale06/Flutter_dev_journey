@@ -1,0 +1,549 @@
+# Flutter Component Revision Page 8 — `Center`
+
+## 1. What is `Center`?
+
+`Center` is a Flutter layout widget used to **place its child exactly in the center of the available space**.
+
+### Simple meaning
+
+> `Center` = Put the child in the middle.
+
+Example:
+
+```dart
+Center(
+  child: Text("Hello"),
+)
+```
+
+The `Text` will appear in the center of the available area.
+
+---
+
+## 2. Basic Structure
+
+```dart
+Center(
+  child: Widget(),
+)
+```
+
+`Center` accepts **one child**.
+
+Example:
+
+```dart
+Center(
+  child: Text("Welcome"),
+)
+```
+
+---
+
+## 3. Complete Example
+
+```dart
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(
+    MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text("Center Example"),
+        ),
+        body: Center(
+          child: Text(
+            "Hello Flutter",
+            style: TextStyle(
+              fontSize: 24,
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+}
+```
+
+### Result
+
+The text appears in the **center of the body**.
+
+---
+
+# 4. Why do we need `Center`?
+
+Suppose you write:
+
+```dart
+Scaffold(
+  body: Text("Hello"),
+)
+```
+
+The text normally starts near the **top-left** of the available body.
+
+If you want it in the center:
+
+```dart
+Scaffold(
+  body: Center(
+    child: Text("Hello"),
+  ),
+)
+```
+
+So `Center` controls the **position of its child**.
+
+---
+
+# 5. `Center` with Different Widgets
+
+`Center` can contain almost any widget.
+
+### Text
+
+```dart
+Center(
+  child: Text("Hello"),
+)
+```
+
+### Icon
+
+```dart
+Center(
+  child: Icon(Icons.home),
+)
+```
+
+### Button
+
+```dart
+Center(
+  child: ElevatedButton(
+    onPressed: () {},
+    child: Text("Login"),
+  ),
+)
+```
+
+### Container
+
+```dart
+Center(
+  child: Container(
+    width: 200,
+    height: 100,
+    color: Colors.blue,
+  ),
+)
+```
+
+The entire `Container` will be centered.
+
+---
+
+# 6. Centering a Container
+
+This is very common when creating login screens or cards.
+
+```dart
+Scaffold(
+  body: Center(
+    child: Container(
+      width: 300,
+      height: 200,
+      color: Colors.blue,
+      child: Center(
+        child: Text(
+          "Login",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 24,
+          ),
+        ),
+      ),
+    ),
+  ),
+)
+```
+
+There are **two Centers** here.
+
+```text
+Center
+   ↓
+Container
+   ↓
+Center
+   ↓
+Text
+```
+
+### First `Center`
+
+Centers the `Container` on the screen.
+
+### Second `Center`
+
+Centers the `Text` inside the `Container`.
+
+---
+
+# 7. `Center` vs `Padding`
+
+These widgets do different jobs.
+
+### `Center`
+
+Controls **position**.
+
+```dart
+Center(
+  child: Text("Hello"),
+)
+```
+
+Meaning:
+
+> Put Hello in the center.
+
+### `Padding`
+
+Controls **space around the child**.
+
+```dart
+Padding(
+  padding: EdgeInsets.all(20),
+  child: Text("Hello"),
+)
+```
+
+Meaning:
+
+> Give 20 pixels of space around Hello.
+
+---
+
+# 8. `Center` vs `Container(alignment:)`
+
+You can also center a child using `Container`.
+
+```dart
+Container(
+  alignment: Alignment.center,
+  child: Text("Hello"),
+)
+```
+
+This produces a similar result to:
+
+```dart
+Center(
+  child: Text("Hello"),
+)
+```
+
+### Difference
+
+`Center` is specifically designed for centering.
+
+`Container` can do many other things such as:
+
+* background color
+* padding
+* margin
+* border
+* border radius
+* shadow
+* alignment
+
+So if you only need centering:
+
+```dart
+Center(
+  child: Text("Hello"),
+)
+```
+
+is simpler.
+
+---
+
+# 9. Centering Multiple Widgets
+
+`Center` accepts only **one child**.
+
+This is ❌ wrong:
+
+```dart
+Center(
+  children: [
+    Text("Name"),
+    Text("Email"),
+  ],
+)
+```
+
+Instead, put a `Column` inside `Center`.
+
+```dart
+Center(
+  child: Column(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Text("Name"),
+      Text("Email"),
+    ],
+  ),
+)
+```
+
+Structure:
+
+```text
+Center
+   ↓
+Column
+   ↓
+ ┌─────────┐
+ │ Name    │
+ │ Email   │
+ └─────────┘
+```
+
+The `Center` centers the entire `Column`.
+
+---
+
+# 10. `mainAxisSize: MainAxisSize.min`
+
+This is important when using `Column` inside `Center`.
+
+```dart
+Center(
+  child: Column(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Text("Welcome"),
+      SizedBox(height: 10),
+      ElevatedButton(
+        onPressed: () {},
+        child: Text("Login"),
+      ),
+    ],
+  ),
+)
+```
+
+`MainAxisSize.min` tells the `Column`:
+
+> Take only as much vertical space as your children need.
+
+This is useful for small groups of widgets that you want centered together.
+
+---
+
+# 11. Real-World Example — Login Screen
+
+A common login screen might use:
+
+```dart
+Scaffold(
+  body: Center(
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          "Login",
+          style: TextStyle(
+            fontSize: 30,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+
+        SizedBox(height: 20),
+
+        TextField(
+          decoration: InputDecoration(
+            hintText: "Email",
+          ),
+        ),
+
+        SizedBox(height: 10),
+
+        TextField(
+          decoration: InputDecoration(
+            hintText: "Password",
+          ),
+        ),
+
+        SizedBox(height: 20),
+
+        ElevatedButton(
+          onPressed: () {},
+          child: Text("Login"),
+        ),
+      ],
+    ),
+  ),
+)
+```
+
+Here:
+
+```text
+Center
+   ↓
+Column
+   ↓
+Login
+   ↓
+Email
+   ↓
+Password
+   ↓
+Login Button
+```
+
+The whole group is centered.
+
+---
+
+# 12. Where is `Center` commonly used?
+
+You will frequently use `Center` for:
+
+* Login screens
+* Loading indicators
+* Empty screens
+* Error messages
+* Welcome screens
+* Splash screens
+* Empty shopping carts
+* Empty music playlists
+* No-data messages
+* Centered buttons
+* Centered icons
+* Centered cards
+
+Example:
+
+```dart
+Center(
+  child: CircularProgressIndicator(),
+)
+```
+
+This displays the loading indicator in the center.
+
+---
+
+# 13. Important Point
+
+`Center` does **not** mean the child itself becomes bigger.
+
+For example:
+
+```dart
+Center(
+  child: Text("Hello"),
+)
+```
+
+The `Text` remains only as large as necessary.
+
+`Center` simply positions it in the center.
+
+---
+
+# 14. Mental Model
+
+Think of the screen as a large room:
+
+```text
+┌───────────────────────────┐
+│                           │
+│                           │
+│          Hello            │
+│                           │
+│                           │
+└───────────────────────────┘
+```
+
+`Center` tells Flutter:
+
+> "Take my child and place it in the middle of my available space."
+
+---
+
+# 15. Common Mistakes
+
+### Mistake 1 — Using `children`
+
+❌
+
+```dart
+Center(
+  children: [
+    Text("A"),
+    Text("B"),
+  ],
+)
+```
+
+`Center` accepts only:
+
+```dart
+child:
+```
+
+Use a `Column` or `Row` for multiple widgets.
+
+---
+
+### Mistake 2 — Expecting Center to arrange multiple widgets
+
+For multiple widgets:
+
+```dart
+Center(
+  child: Column(
+    children: [
+      Text("A"),
+      Text("B"),
+    ],
+  ),
+)
+```
+
+`Center` centers the **Column**, while the `Column` arranges the children.
+
+---
+
+# 16. Quick Revision
+
+| Widget      | Main purpose                               |
+| ----------- | ------------------------------------------ |
+| `Center`    | Center one child                           |
+| `Padding`   | Add space around a child                   |
+| `SizedBox`  | Give fixed size / spacing                  |
+| `Container` | Box with size, decoration, alignment, etc. |
+| `Row`       | Arrange widgets horizontally               |
+| `Column`    | Arrange widgets vertically                 |
+
+---
+
+## One-Line Definition
+
+> **`Center` is a Flutter layout widget that positions its single child at the center of the available space.**
+
+### Basic syntax to remember
+
+```dart
+Center(
+  child: YourWidget(),
+)
+```

@@ -1,0 +1,551 @@
+# Flutter Component Revision Page — `Expanded`
+
+## 1. What is `Expanded`?
+
+`Expanded` is a layout widget used inside a **`Row`, `Column`, or `Flex`** to make a child **take the available remaining space**.
+
+### Simple meaning
+
+> `Expanded` = Give this widget the remaining available space.
+
+---
+
+## 2. Why do we need `Expanded`?
+
+Suppose you have:
+
+```dart
+Row(
+  children: [
+    Text("Hello"),
+    Text("This is a very long text"),
+  ],
+)
+```
+
+Flutter tries to place both widgets in the Row's available width.
+
+If there isn't enough space, you may get:
+
+```text
+RenderFlex overflowed
+```
+
+`Expanded` tells Flutter:
+
+> "Let this widget use the remaining space."
+
+Example:
+
+```dart
+Row(
+  children: [
+    Expanded(
+      child: Text("This is a very long text"),
+    ),
+    Icon(Icons.more_vert),
+  ],
+)
+```
+
+Now the `Text` uses the available space left after the icon.
+
+---
+
+# 3. Basic Syntax
+
+```dart
+Expanded(
+  child: YourWidget(),
+)
+```
+
+Example:
+
+```dart
+Row(
+  children: [
+    Expanded(
+      child: Container(
+        height: 100,
+        color: Colors.blue,
+      ),
+    ),
+  ],
+)
+```
+
+The `Container` expands to use the available horizontal space.
+
+---
+
+# 4. `Expanded` Inside a Row
+
+This is one of the most common uses.
+
+```dart
+Row(
+  children: [
+    Expanded(
+      child: Container(
+        height: 100,
+        color: Colors.blue,
+      ),
+    ),
+    SizedBox(width: 10),
+    Expanded(
+      child: Container(
+        height: 100,
+        color: Colors.green,
+      ),
+    ),
+  ],
+)
+```
+
+Conceptually:
+
+```text
+┌──────────────┬──────────────┐
+│              │              │
+│    Blue      │    Green     │
+│              │              │
+└──────────────┴──────────────┘
+```
+
+Both `Expanded` widgets receive a share of the available width.
+
+---
+
+# 5. Multiple `Expanded` Widgets
+
+By default, each gets an equal share.
+
+```dart
+Row(
+  children: [
+    Expanded(
+      child: Container(color: Colors.red),
+    ),
+    Expanded(
+      child: Container(color: Colors.blue),
+    ),
+    Expanded(
+      child: Container(color: Colors.green),
+    ),
+  ],
+)
+```
+
+Conceptually:
+
+```text
+┌────────┬────────┬────────┐
+│  Red   │  Blue  │ Green  │
+│        │        │        │
+└────────┴────────┴────────┘
+```
+
+Each gets approximately **1/3** of the available width.
+
+---
+
+# 6. `flex` Property
+
+You can control how much space each `Expanded` receives using `flex`.
+
+Example:
+
+```dart
+Row(
+  children: [
+    Expanded(
+      flex: 2,
+      child: Container(color: Colors.blue),
+    ),
+    Expanded(
+      flex: 1,
+      child: Container(color: Colors.green),
+    ),
+  ],
+)
+```
+
+The available space is divided in a **2 : 1 ratio**.
+
+```text
+┌────────────────────┬──────────┐
+│       Blue         │  Green   │
+│       2 parts      │ 1 part   │
+└────────────────────┴──────────┘
+```
+
+### Another example
+
+```dart
+Expanded(flex: 3, child: ...)
+Expanded(flex: 2, child: ...)
+Expanded(flex: 1, child: ...)
+```
+
+Total:
+
+```text
+3 + 2 + 1 = 6 parts
+```
+
+So:
+
+* First → 3/6
+* Second → 2/6
+* Third → 1/6
+
+---
+
+# 7. `Expanded` Inside a Column
+
+`Expanded` also works vertically inside a `Column`.
+
+```dart
+Column(
+  children: [
+    Text("Header"),
+
+    Expanded(
+      child: Container(
+        color: Colors.blue,
+      ),
+    ),
+
+    Text("Footer"),
+  ],
+)
+```
+
+The middle `Container` takes the **remaining vertical space**.
+
+Conceptually:
+
+```text
+┌──────────────────┐
+│ Header           │
+├──────────────────┤
+│                  │
+│                  │
+│     Expanded     │
+│                  │
+│                  │
+├──────────────────┤
+│ Footer           │
+└──────────────────┘
+```
+
+This is extremely useful for screen layouts.
+
+---
+
+# 8. Real-World Example — App Layout
+
+Imagine an app with:
+
+```text
+Header
+----------------
+Main Content
+----------------
+Bottom Button
+```
+
+You can write:
+
+```dart
+Column(
+  children: [
+    Container(
+      height: 60,
+      child: Text("Header"),
+    ),
+
+    Expanded(
+      child: Container(
+        child: Text("Main Content"),
+      ),
+    ),
+
+    ElevatedButton(
+      onPressed: () {},
+      child: Text("Continue"),
+    ),
+  ],
+)
+```
+
+The main content automatically takes the remaining space.
+
+---
+
+# 9. `Expanded` with Text
+
+Very common in list items.
+
+```dart
+Row(
+  children: [
+    Icon(Icons.person),
+
+    SizedBox(width: 10),
+
+    Expanded(
+      child: Text(
+        "This is a very long username that should not overflow",
+      ),
+    ),
+
+    Icon(Icons.more_vert),
+  ],
+)
+```
+
+The text gets the available space between the two icons.
+
+This pattern is extremely common in:
+
+* WhatsApp-style lists
+* Music players
+* Product lists
+* Email lists
+* Chat applications
+* Profile lists
+
+---
+
+# 10. `Expanded` vs `SizedBox`
+
+They are different.
+
+### `SizedBox`
+
+You give a **fixed size**.
+
+```dart
+SizedBox(
+  width: 200,
+  child: Text("Hello"),
+)
+```
+
+Meaning:
+
+> Give me 200 logical pixels.
+
+### `Expanded`
+
+You don't specify an exact width.
+
+```dart
+Expanded(
+  child: Text("Hello"),
+)
+```
+
+Meaning:
+
+> Give me the remaining available space.
+
+---
+
+# 11. `Expanded` vs `Container`
+
+`Container` can specify:
+
+```dart
+width: 200,
+height: 100,
+```
+
+But `Expanded` works based on the **available space**.
+
+Example:
+
+```dart
+Expanded(
+  child: Container(
+    color: Colors.blue,
+  ),
+)
+```
+
+The Container expands because its parent `Expanded` gives it the available space.
+
+---
+
+# 12. Important Rule
+
+`Expanded` should normally be used inside:
+
+```text
+Row
+Column
+Flex
+```
+
+For example:
+
+```dart
+Row(
+  children: [
+    Expanded(
+      child: Text("Hello"),
+    ),
+  ],
+)
+```
+
+or:
+
+```dart
+Column(
+  children: [
+    Expanded(
+      child: ListView(),
+    ),
+  ],
+)
+```
+
+---
+
+# 13. Very Common Real-World Pattern
+
+A screen containing a list and a button:
+
+```dart
+Column(
+  children: [
+    Expanded(
+      child: ListView(
+        children: [
+          Text("Item 1"),
+          Text("Item 2"),
+          Text("Item 3"),
+        ],
+      ),
+    ),
+
+    ElevatedButton(
+      onPressed: () {},
+      child: Text("Submit"),
+    ),
+  ],
+)
+```
+
+Why `Expanded`?
+
+Because the `ListView` needs to know how much space it can use.
+
+Without proper constraints, you can encounter layout problems.
+
+---
+
+# 14. Common Mistake
+
+Don't blindly put `Expanded` everywhere.
+
+For example, this is usually unnecessary:
+
+```dart
+Column(
+  children: [
+    Expanded(
+      child: Text("Hello"),
+    ),
+  ],
+)
+```
+
+If you simply want some space between widgets, use:
+
+```dart
+SizedBox(height: 20)
+```
+
+`Expanded` is for **using available remaining space**, not ordinary spacing.
+
+---
+
+# 15. Mental Model
+
+Imagine a box with 100 units of free space.
+
+```text
+Available space = 100
+```
+
+If you have:
+
+```dart
+Expanded(flex: 1)
+Expanded(flex: 1)
+```
+
+they receive:
+
+```text
+50 + 50
+```
+
+If you have:
+
+```dart
+Expanded(flex: 2)
+Expanded(flex: 1)
+```
+
+they receive:
+
+```text
+≈67 + ≈33
+```
+
+So:
+
+> `flex` controls the **proportion** of available space.
+
+---
+
+# 16. Quick Revision
+
+| Widget              | Purpose                          |
+| ------------------- | -------------------------------- |
+| `SizedBox`          | Fixed size / spacing             |
+| `Container`         | Box, decoration, size, alignment |
+| `Expanded`          | Take remaining available space   |
+| `Expanded(flex: 2)` | Take 2 parts of available space  |
+| `Row`               | Horizontal layout                |
+| `Column`            | Vertical layout                  |
+
+### Remember
+
+```dart
+Expanded(
+  child: Widget(),
+)
+```
+
+means:
+
+> **"Use the remaining available space for this widget."**
+
+And:
+
+```dart
+Expanded(
+  flex: 2,
+  child: Widget(),
+)
+```
+
+means:
+
+> **"Give this widget 2 proportional parts of the available space."**

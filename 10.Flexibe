@@ -1,0 +1,426 @@
+# Flutter Component Revision Page — `Flexible`
+
+## 1. What is `Flexible`?
+
+`Flexible` is a layout widget used inside a **`Row`, `Column`, or `Flex`** to allow a child to use available space **without forcing it to fill all of that space**.
+
+### Simple meaning
+
+> `Flexible` = "You can use the available space, but you don't have to use all of it."
+
+---
+
+# 2. Why do we need `Flexible`?
+
+Consider a `Row`:
+
+```dart
+Row(
+  children: [
+    Text("Very long text here..."),
+    Icon(Icons.star),
+  ],
+)
+```
+
+If the text is too long, the Row may overflow.
+
+We can use:
+
+```dart
+Row(
+  children: [
+    Flexible(
+      child: Text("Very long text here..."),
+    ),
+    Icon(Icons.star),
+  ],
+)
+```
+
+Now Flutter allows the text to shrink/wrap within the available space.
+
+---
+
+# 3. Basic Syntax
+
+```dart
+Flexible(
+  child: YourWidget(),
+)
+```
+
+Example:
+
+```dart
+Row(
+  children: [
+    Flexible(
+      child: Text(
+        "This is a long piece of text.",
+      ),
+    ),
+    Icon(Icons.more_vert),
+  ],
+)
+```
+
+---
+
+# 4. `Flexible` vs `Expanded`
+
+This is the **most important thing to understand**.
+
+Both can control available space, but they behave differently.
+
+### `Expanded`
+
+> Child **must fill** the available space assigned to it.
+
+```dart
+Expanded(
+  child: Container(),
+)
+```
+
+### `Flexible`
+
+> Child **can use** the available space, but doesn't have to fill it.
+
+```dart
+Flexible(
+  child: Container(),
+)
+```
+
+### Simple memory trick
+
+```text
+Expanded  → MUST expand
+Flexible  → CAN expand
+```
+
+---
+
+# 5. Visual Difference
+
+Suppose there is a large amount of available space.
+
+### Expanded
+
+```text
+┌──────────────────────────────┐
+│      Child fills space       │
+└──────────────────────────────┘
+```
+
+### Flexible
+
+```text
+┌──────────────────────────────┐
+│ Child        remaining space │
+└──────────────────────────────┘
+```
+
+The `Flexible` child is allowed to be smaller than the available space.
+
+---
+
+# 6. Example: Text + Icon
+
+This is a very common pattern.
+
+```dart
+Row(
+  children: [
+    Flexible(
+      child: Text(
+        "This is a very long product name that may not fit",
+      ),
+    ),
+
+    Icon(Icons.favorite),
+  ],
+)
+```
+
+The text is allowed to use the available width without pushing the icon outside the screen.
+
+---
+
+# 7. `flex` Property
+
+`Flexible` also supports `flex`.
+
+```dart
+Row(
+  children: [
+    Flexible(
+      flex: 2,
+      child: Text("First"),
+    ),
+
+    Flexible(
+      flex: 1,
+      child: Text("Second"),
+    ),
+  ],
+)
+```
+
+The available flexible space is divided in a **2 : 1 ratio**.
+
+Just like `Expanded`, the `flex` value controls the proportion.
+
+---
+
+# 8. `FlexFit`
+
+`Flexible` has an important property called:
+
+```dart
+fit:
+```
+
+It controls how strongly the child should fit the allocated space.
+
+There are two main values:
+
+```dart
+FlexFit.loose
+FlexFit.tight
+```
+
+### `FlexFit.loose`
+
+The child **can be smaller** than the allocated space.
+
+This is the default behavior of `Flexible`.
+
+```dart
+Flexible(
+  fit: FlexFit.loose,
+  child: Text("Hello"),
+)
+```
+
+### `FlexFit.tight`
+
+The child is required to fill its allocated space.
+
+```dart
+Flexible(
+  fit: FlexFit.tight,
+  child: Text("Hello"),
+)
+```
+
+`FlexFit.tight` behaves similarly to `Expanded`.
+
+In fact:
+
+```dart
+Expanded(
+  child: Text("Hello"),
+)
+```
+
+is essentially a convenient form of:
+
+```dart
+Flexible(
+  fit: FlexFit.tight,
+  child: Text("Hello"),
+)
+```
+
+---
+
+# 9. Real-World Example — Music App
+
+Imagine a music list:
+
+```text
+🎵  Very Long Song Name        ⋮
+    Artist Name
+```
+
+You can use:
+
+```dart
+Row(
+  children: [
+    Icon(Icons.music_note),
+
+    SizedBox(width: 10),
+
+    Flexible(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Very Long Song Name That May Not Fit",
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          Text("Artist Name"),
+        ],
+      ),
+    ),
+
+    Icon(Icons.more_vert),
+  ],
+)
+```
+
+`Flexible` prevents the song name from taking unlimited width.
+
+---
+
+# 10. `Flexible` in a Column
+
+It can also be used vertically.
+
+```dart
+Column(
+  children: [
+    Text("Header"),
+
+    Flexible(
+      child: Text(
+        "A large amount of text...",
+      ),
+    ),
+
+    Text("Footer"),
+  ],
+)
+```
+
+The middle widget can use the available vertical space without necessarily being forced to fill all of it.
+
+---
+
+# 11. When Should You Use `Flexible`?
+
+Use `Flexible` when:
+
+* Text might become too long
+* You want to prevent Row overflow
+* A widget should be allowed to shrink
+* You don't want to force a widget to fill all available space
+* You need proportional flexible space
+* Building responsive layouts
+
+Common places:
+
+* Chat applications
+* Music players
+* Product cards
+* Profile rows
+* Email lists
+* Search results
+* Settings screens
+
+---
+
+# 12. `Expanded` vs `Flexible`
+
+| Feature                  | `Expanded`                  | `Flexible`                           |
+| ------------------------ | --------------------------- | ------------------------------------ |
+| Uses available space     | Yes                         | Yes                                  |
+| Must fill assigned space | Yes                         | No                                   |
+| Default fit              | Tight                       | Loose                                |
+| Can shrink               | Limited by tight constraint | Yes                                  |
+| Common use               | Fill remaining area         | Prevent overflow / allow flexibility |
+
+### Easy rule
+
+Use:
+
+```dart
+Expanded
+```
+
+when you mean:
+
+> **"Fill the remaining space."**
+
+Use:
+
+```dart
+Flexible
+```
+
+when you mean:
+
+> **"Fit here if necessary, but don't force it to fill everything."**
+
+---
+
+# 13. Important Relationship
+
+Remember this:
+
+```text
+Row / Column
+     ↓
+ ┌───────────────┐
+ │ Expanded      │ → must fill allocated space
+ │ Flexible      │ → may use less space
+ └───────────────┘
+```
+
+Both are tools for managing **available space**.
+
+---
+
+# 14. Common Mistake
+
+Don't use `Flexible` simply because it sounds like "responsive."
+
+For example, if you need a fixed gap:
+
+```dart
+SizedBox(width: 20)
+```
+
+is better.
+
+If you want a widget to completely occupy remaining space:
+
+```dart
+Expanded(...)
+```
+
+is usually clearer.
+
+---
+
+# 15. Quick Revision
+
+### `Expanded`
+
+```dart
+Expanded(
+  child: Widget(),
+)
+```
+
+**Must use the available allocated space.**
+
+### `Flexible`
+
+```dart
+Flexible(
+  child: Widget(),
+)
+```
+
+**Can use the available allocated space without being forced to fill it.**
+
+### One-line definitions
+
+> **Expanded** forces a child to fill the available space along the main axis.
+
+> **Flexible** allows a child to use available space without forcing it to fill all of it.

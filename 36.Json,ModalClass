@@ -1,0 +1,646 @@
+# JSON & Model Classes
+
+## 1. What is JSON?
+
+**JSON (JavaScript Object Notation)** is a common format used to send data between an app and a server.
+
+Example API response:
+
+```json
+{
+  "id": 101,
+  "name": "Rahul",
+  "email": "rahul@gmail.com"
+}
+```
+
+A Flutter app receives this data and converts it into Dart objects.
+
+---
+
+# 2. JSON in Flutter
+
+Flutter provides:
+
+```dart
+import 'dart:convert';
+```
+
+The main functions are:
+
+```dart
+jsonDecode()
+jsonEncode()
+```
+
+### JSON → Dart data
+
+```dart
+final data = jsonDecode(response.body);
+```
+
+### Dart data → JSON
+
+```dart
+final json = jsonEncode(data);
+```
+
+---
+
+# 3. Simple `jsonDecode()`
+
+Suppose the API returns:
+
+```json
+{
+  "name": "Rahul",
+  "age": 21
+}
+```
+
+Flutter:
+
+```dart
+final data = jsonDecode(response.body);
+
+print(data["name"]);
+print(data["age"]);
+```
+
+Output:
+
+```text
+Rahul
+21
+```
+
+Here `data` behaves like a map.
+
+---
+
+# 4. Why Do We Need Model Classes?
+
+For small data:
+
+```dart
+data["name"]
+data["age"]
+data["email"]
+```
+
+is okay.
+
+But imagine an API gives:
+
+```text
+id
+name
+email
+phone
+address
+city
+country
+profileImage
+createdAt
+...
+```
+
+Using:
+
+```dart
+data["name"]
+data["email"]
+data["phone"]
+```
+
+everywhere becomes messy.
+
+Instead, create a **model class**.
+
+---
+
+# 5. Model Class
+
+For:
+
+```json
+{
+  "id": 101,
+  "name": "Rahul",
+  "email": "rahul@gmail.com"
+}
+```
+
+Create:
+
+```dart
+class User {
+
+  int id;
+  String name;
+  String email;
+
+  User({
+    required this.id,
+    required this.name,
+    required this.email,
+  });
+
+}
+```
+
+Now we have a proper Dart object representing a user.
+
+---
+
+# 6. `fromJson()`
+
+The API gives JSON.
+
+We need to convert that JSON into our `User` object.
+
+```dart
+class User {
+
+  int id;
+  String name;
+  String email;
+
+  User({
+    required this.id,
+    required this.name,
+    required this.email,
+  });
+
+  factory User.fromJson(Map<String, dynamic> json) {
+
+    return User(
+      id: json["id"],
+      name: json["name"],
+      email: json["email"],
+    );
+  }
+}
+```
+
+The important part:
+
+```dart
+User.fromJson(json)
+```
+
+means:
+
+```text
+JSON
+ ↓
+User object
+```
+
+---
+
+# 7. Using `fromJson()`
+
+Suppose:
+
+```dart
+final data = jsonDecode(response.body);
+```
+
+Then:
+
+```dart
+User user = User.fromJson(data);
+```
+
+Now instead of:
+
+```dart
+data["name"]
+```
+
+we can write:
+
+```dart
+user.name
+```
+
+Instead of:
+
+```dart
+data["email"]
+```
+
+we write:
+
+```dart
+user.email
+```
+
+Much cleaner.
+
+---
+
+# 8. Complete Example
+
+```dart
+import 'dart:convert';
+
+class User {
+
+  int id;
+  String name;
+  String email;
+
+  User({
+    required this.id,
+    required this.name,
+    required this.email,
+  });
+
+  factory User.fromJson(Map<String, dynamic> json) {
+
+    return User(
+      id: json["id"],
+      name: json["name"],
+      email: json["email"],
+    );
+  }
+}
+
+void main() {
+
+  String response = '''
+  {
+    "id": 101,
+    "name": "Rahul",
+    "email": "rahul@gmail.com"
+  }
+  ''';
+
+  final data = jsonDecode(response);
+
+  User user = User.fromJson(data);
+
+  print(user.id);
+  print(user.name);
+  print(user.email);
+}
+```
+
+Output:
+
+```text
+101
+Rahul
+rahul@gmail.com
+```
+
+---
+
+# 9. `toJson()`
+
+Sometimes we need to send data **from Flutter to an API**.
+
+Then we convert our Dart object into JSON.
+
+Add:
+
+```dart
+Map<String, dynamic> toJson() {
+
+  return {
+    "id": id,
+    "name": name,
+    "email": email,
+  };
+}
+```
+
+Now:
+
+```dart
+final data = user.toJson();
+```
+
+Then:
+
+```dart
+final json = jsonEncode(data);
+```
+
+Flow:
+
+```text
+Flutter Object
+      ↓
+   toJson()
+      ↓
+    Map
+      ↓
+ jsonEncode()
+      ↓
+    JSON
+      ↓
+    API
+```
+
+---
+
+# 10. Complete Model
+
+```dart
+class User {
+
+  int id;
+  String name;
+  String email;
+
+  User({
+    required this.id,
+    required this.name,
+    required this.email,
+  });
+
+  factory User.fromJson(Map<String, dynamic> json) {
+
+    return User(
+      id: json["id"],
+      name: json["name"],
+      email: json["email"],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+
+    return {
+      "id": id,
+      "name": name,
+      "email": email,
+    };
+  }
+}
+```
+
+This is the basic pattern you should remember.
+
+---
+
+# 11. JSON Array
+
+APIs often return multiple objects.
+
+Example:
+
+```json
+[
+  {
+    "id": 1,
+    "name": "Rahul"
+  },
+  {
+    "id": 2,
+    "name": "Amit"
+  },
+  {
+    "id": 3,
+    "name": "Priya"
+  }
+]
+```
+
+After:
+
+```dart
+final data = jsonDecode(response.body);
+```
+
+`data` is a list.
+
+Convert it into a list of `User` objects:
+
+```dart
+List<User> users = (data as List)
+    .map((item) => User.fromJson(item))
+    .toList();
+```
+
+Now:
+
+```dart
+users[0].name
+users[1].name
+users[2].name
+```
+
+---
+
+# 12. JSON + ListView
+
+This is a very common real-app flow:
+
+```text
+API
+ ↓
+JSON
+ ↓
+jsonDecode()
+ ↓
+List<User>
+ ↓
+ListView.builder()
+ ↓
+UI
+```
+
+Example:
+
+```dart
+ListView.builder(
+  itemCount: users.length,
+  itemBuilder: (context, index) {
+
+    final user = users[index];
+
+    return ListTile(
+      title: Text(user.name),
+      subtitle: Text(user.email),
+    );
+  },
+)
+```
+
+This connects directly to the `ListView.builder` you already learned.
+
+---
+
+# 13. API + Model + FutureBuilder
+
+For a real API:
+
+```text
+API
+ ↓
+http.get()
+ ↓
+response.body
+ ↓
+jsonDecode()
+ ↓
+User.fromJson()
+ ↓
+List<User>
+ ↓
+FutureBuilder
+ ↓
+ListView
+```
+
+This is one of the most important Flutter patterns for API-based apps.
+
+---
+
+# 14. `fromJson()` vs `toJson()`
+
+Easy memory:
+
+```text
+fromJson()
+JSON → Dart Object
+
+toJson()
+Dart Object → JSON
+```
+
+Remember it as:
+
+```text
+FROM JSON
+JSON comes FROM server
+
+TO JSON
+Data goes TO server
+```
+
+---
+
+# 15. Why Model Classes Matter
+
+Without models:
+
+```dart
+data["name"]
+data["email"]
+data["phone"]
+data["address"]
+```
+
+With models:
+
+```dart
+user.name
+user.email
+user.phone
+user.address
+```
+
+Models give your application:
+
+* Cleaner code
+* Better organization
+* Easier API handling
+* Reusable data structures
+* Easier debugging
+* Better scalability
+
+---
+
+# 16. Important Pattern to Memorize
+
+For API responses:
+
+```dart
+class Product {
+
+  int id;
+  String name;
+  double price;
+
+  Product({
+    required this.id,
+    required this.name,
+    required this.price,
+  });
+
+  factory Product.fromJson(Map<String, dynamic> json) {
+
+    return Product(
+      id: json["id"],
+      name: json["name"],
+      price: (json["price"] as num).toDouble(),
+    );
+  }
+}
+```
+
+Then:
+
+```dart
+final data = jsonDecode(response.body);
+
+Product product = Product.fromJson(data);
+```
+
+For multiple products:
+
+```dart
+List<Product> products = (data as List)
+    .map((item) => Product.fromJson(item))
+    .toList();
+```
+
+---
+
+# 17. Easy Memory
+
+```text
+JSON
+ ↓
+jsonDecode()
+ ↓
+Map/List
+ ↓
+fromJson()
+ ↓
+Dart Model
+ ↓
+UI
+```
+
+Sending data:
+
+```text
+Dart Model
+ ↓
+toJson()
+ ↓
+Map
+ ↓
+jsonEncode()
+ ↓
+JSON
+ ↓
+API
+```
+
+### The 4 things to remember
+
+```text
+jsonDecode()
+jsonEncode()
+
+fromJson()
+toJson()
+```
+
+These four are enough to understand the basic JSON/model workflow.

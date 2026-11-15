@@ -1,0 +1,427 @@
+# Flutter — GridView
+
+## 1. What is `GridView`?
+
+`GridView` displays widgets in a **grid layout**.
+
+Instead of:
+
+```text
+Item 1
+Item 2
+Item 3
+Item 4
+```
+
+you can have:
+
+```text
+┌─────────┐  ┌─────────┐
+│ Item 1  │  │ Item 2  │
+└─────────┘  └─────────┘
+
+┌─────────┐  ┌─────────┐
+│ Item 3  │  │ Item 4  │
+└─────────┘  └─────────┘
+```
+
+Common uses:
+
+* Products
+* Categories
+* Photos
+* Movies
+* Food items
+* Dashboard cards
+
+---
+
+# 2. Basic GridView
+
+```dart
+GridView.count(
+  crossAxisCount: 2,
+
+  children: [
+
+    Card(
+      child: Center(
+        child: Text("Item 1"),
+      ),
+    ),
+
+    Card(
+      child: Center(
+        child: Text("Item 2"),
+      ),
+    ),
+
+    Card(
+      child: Center(
+        child: Text("Item 3"),
+      ),
+    ),
+
+    Card(
+      child: Center(
+        child: Text("Item 4"),
+      ),
+    ),
+
+  ],
+)
+```
+
+### `crossAxisCount`
+
+This controls the number of columns.
+
+```dart
+crossAxisCount: 2
+```
+
+means:
+
+```text
+Column 1    Column 2
+   ↓           ↓
+ Item 1      Item 2
+ Item 3      Item 4
+ Item 5      Item 6
+```
+
+---
+
+# 3. Dynamic Grid — `GridView.builder`
+
+Just like `ListView.builder`, use `GridView.builder` when your data is dynamic.
+
+```dart
+GridView.builder(
+  itemCount: products.length,
+
+  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+    crossAxisCount: 2,
+  ),
+
+  itemBuilder: (context, index) {
+
+    final product = products[index];
+
+    return Card(
+      child: Center(
+        child: Text(product["title"]!),
+      ),
+    );
+  },
+)
+```
+
+The important difference is:
+
+```text
+ListView.builder
+        ↓
+one item per row
+
+GridView.builder
+        ↓
+multiple items per row
+```
+
+---
+
+# 4. Dynamic Product Grid
+
+Using the same type of data:
+
+```dart
+List<Map<String, String>> products = [
+  {
+    "image": "https://picsum.photos/id/1/300",
+    "title": "Laptop",
+    "info": "Powerful laptop",
+  },
+  {
+    "image": "https://picsum.photos/id/2/300",
+    "title": "Headphones",
+    "info": "Wireless audio",
+  },
+  {
+    "image": "https://picsum.photos/id/3/300",
+    "title": "Phone",
+    "info": "5G smartphone",
+  },
+  {
+    "image": "https://picsum.photos/id/4/300",
+    "title": "Watch",
+    "info": "Fitness tracking",
+  },
+];
+```
+
+Then:
+
+```dart
+GridView.builder(
+  padding: EdgeInsets.all(10),
+
+  itemCount: products.length,
+
+  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+    crossAxisCount: 2,
+
+    crossAxisSpacing: 10,
+
+    mainAxisSpacing: 10,
+
+    childAspectRatio: 0.75,
+  ),
+
+  itemBuilder: (context, index) {
+
+    final product = products[index];
+
+    return Card(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+
+        children: [
+
+          Expanded(
+            child: Image.network(
+              product["image"]!,
+              width: double.infinity,
+              fit: BoxFit.cover,
+            ),
+          ),
+
+          Padding(
+            padding: EdgeInsets.all(10),
+
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+
+              children: [
+
+                Text(
+                  product["title"]!,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+
+                SizedBox(height: 4),
+
+                Text(
+                  product["info"]!,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  },
+)
+```
+
+---
+
+# 5. Important Grid Properties
+
+### `crossAxisCount`
+
+Number of columns.
+
+```dart
+crossAxisCount: 2
+```
+
+or:
+
+```dart
+crossAxisCount: 3
+```
+
+---
+
+### `crossAxisSpacing`
+
+Horizontal space between columns.
+
+```dart
+crossAxisSpacing: 10
+```
+
+---
+
+### `mainAxisSpacing`
+
+Vertical space between rows.
+
+```dart
+mainAxisSpacing: 10
+```
+
+---
+
+### `childAspectRatio`
+
+Controls the shape/size of each grid item.
+
+```dart
+childAspectRatio: 0.75
+```
+
+Lower value → taller item.
+
+Higher value → wider/shorter item.
+
+---
+
+# 6. GridView vs ListView
+
+| ListView                 | GridView                         |
+| ------------------------ | -------------------------------- |
+| Items arranged in rows   | Items arranged in columns + rows |
+| Usually one item per row | Multiple items per row           |
+| Contacts                 | Products                         |
+| Messages                 | Categories                       |
+| Songs                    | Photo gallery                    |
+
+### Remember
+
+```text
+ListView
+↓
+1 column
+
+GridView
+↓
+2+ columns
+```
+
+---
+
+# 7. `GridView.count` vs `GridView.builder`
+
+### `GridView.count`
+
+Good when you have a small number of fixed widgets.
+
+```dart
+GridView.count(
+  crossAxisCount: 2,
+  children: [
+    Text("A"),
+    Text("B"),
+    Text("C"),
+    Text("D"),
+  ],
+)
+```
+
+### `GridView.builder`
+
+Better for dynamic data.
+
+```dart
+GridView.builder(
+  itemCount: products.length,
+
+  gridDelegate:
+      SliverGridDelegateWithFixedCrossAxisCount(
+    crossAxisCount: 2,
+  ),
+
+  itemBuilder: (context, index) {
+    return Text(products[index]["title"]!);
+  },
+)
+```
+
+For real apps, **`GridView.builder` is the important one to remember**.
+
+---
+
+# 8. Important Warning
+
+Just like `ListView`, a `GridView` needs a proper height when placed inside a `Column`.
+
+Avoid:
+
+```dart
+Column(
+  children: [
+    Text("Products"),
+
+    GridView.builder(
+      itemCount: 20,
+      // ...
+    ),
+  ],
+)
+```
+
+Use:
+
+```dart
+Column(
+  children: [
+
+    Text("Products"),
+
+    Expanded(
+      child: GridView.builder(
+        itemCount: 20,
+
+        gridDelegate:
+            SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+        ),
+
+        itemBuilder: (context, index) {
+          return Card(
+            child: Text("Product $index"),
+          );
+        },
+      ),
+    ),
+  ],
+)
+```
+
+---
+
+# 9. Mental Model
+
+```text
+GridView.builder
+       ↓
+  itemCount
+       ↓
+How many items?
+       ↓
+gridDelegate
+       ↓
+How should the grid be arranged?
+       ↓
+itemBuilder
+       ↓
+What should each item look like?
+       ↓
+index
+       ↓
+Which data should this item use?
+```
+
+---
+
+## One-line revision
+
+**`GridView` displays widgets in a scrollable grid, and `GridView.builder` is used to efficiently create dynamic grid items from data.**

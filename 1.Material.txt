@@ -1,0 +1,285 @@
+# Flutter Component: MaterialApp
+
+## 1. What is `MaterialApp`?
+
+`MaterialApp` is usually the **main/root widget of a Flutter Material Design application**.
+
+It provides the overall configuration and behavior of the app, such as:
+
+* App title
+* Theme
+* Navigation
+* Routes
+* Material Design features
+* Debug banner configuration
+
+Think of it as the **container/configuration for the entire application**.
+
+---
+
+## 2. Basic Syntax
+
+```dart
+MaterialApp(
+  home: Scaffold(
+    body: Center(
+      child: Text("Hello Flutter"),
+    ),
+  ),
+)
+```
+
+A complete basic application:
+
+```dart
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(
+    MaterialApp(
+      home: Scaffold(
+        body: Center(
+          child: Text("Hello Flutter"),
+        ),
+      ),
+    ),
+  );
+}
+```
+
+---
+
+## 3. Understanding the Structure
+
+```text
+main()
+   ↓
+runApp()
+   ↓
+MaterialApp
+   ↓
+Scaffold
+   ↓
+Center
+   ↓
+Text
+```
+
+### `runApp()`
+
+`runApp()` tells Flutter which widget should be used as the root of the application.
+
+```dart
+runApp(
+  MaterialApp(
+    home: ...
+  ),
+);
+```
+
+---
+
+## 4. Important Properties
+
+### `home`
+
+Specifies the **first screen** displayed when the app starts.
+
+```dart
+MaterialApp(
+  home: Scaffold(
+    body: Text("Home Screen"),
+  ),
+)
+```
+
+Think:
+
+```text
+MaterialApp
+     ↓
+   home
+     ↓
+First Screen
+```
+
+---
+
+### `title`
+
+Gives the application a title.
+
+```dart
+MaterialApp(
+  title: "My Calculator",
+  home: Scaffold(
+    body: Text("Calculator"),
+  ),
+)
+```
+
+---
+
+### `theme`
+
+Controls the overall visual appearance of the application.
+
+```dart
+MaterialApp(
+  theme: ThemeData(
+    primaryColor: Colors.blue,
+  ),
+  home: Scaffold(
+    body: Text("Hello"),
+  ),
+)
+```
+
+Themes become especially useful when you want the entire application to follow the same design.
+
+---
+
+### `debugShowCheckedModeBanner`
+
+Flutter may show:
+
+```text
+DEBUG
+```
+
+in the top-right corner during development.
+
+You can hide it with:
+
+```dart
+MaterialApp(
+  debugShowCheckedModeBanner: false,
+  home: Scaffold(
+    body: Text("Hello"),
+  ),
+)
+```
+
+---
+
+## 5. Real-World Example
+
+For a currency converter:
+
+```dart
+void main() {
+  runApp(
+    MaterialApp(
+      title: "Currency Converter",
+      debugShowCheckedModeBanner: false,
+
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text("Currency Converter"),
+        ),
+
+        body: Center(
+          child: Text("Convert Currency"),
+        ),
+      ),
+    ),
+  );
+}
+```
+
+Structure:
+
+```text
+MaterialApp
+│
+├── title
+│
+├── debugShowCheckedModeBanner
+│
+└── home
+     │
+     └── Scaffold
+          │
+          ├── AppBar
+          │
+          └── Body
+```
+
+---
+
+## 6. Where is `MaterialApp` Used?
+
+`MaterialApp` is commonly used as the **root widget of a Flutter Material application**.
+
+It is normally created once at the top level.
+
+You generally do NOT create a separate `MaterialApp` for every screen.
+
+Example:
+
+```text
+YOUR APP
+│
+└── MaterialApp
+     │
+     ├── Screen 1
+     │    └── Scaffold
+     │
+     ├── Screen 2
+     │    └── Scaffold
+     │
+     └── Screen 3
+          └── Scaffold
+```
+
+---
+
+## 7. `MaterialApp` vs `Scaffold`
+
+This distinction is important.
+
+| Widget        | Purpose                 |
+| ------------- | ----------------------- |
+| `MaterialApp` | Overall application     |
+| `Scaffold`    | Structure of one screen |
+
+Think:
+
+```text
+MaterialApp
+= Entire application
+
+Scaffold
+= One screen
+```
+
+---
+
+## 8. Quick Revision
+
+Remember:
+
+```text
+MaterialApp
+     ↓
+Controls/configures the overall app
+     ↓
+home
+     ↓
+First screen
+```
+
+Most commonly used properties:
+
+```dart
+MaterialApp(
+  title: "...",
+  theme: ThemeData(...),
+  debugShowCheckedModeBanner: false,
+  home: ...
+)
+```
+
+## 9. One-Line Definition
+
+**`MaterialApp` is the root widget that provides the overall configuration and Material Design functionality for a Flutter application.**

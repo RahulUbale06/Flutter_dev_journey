@@ -1,0 +1,513 @@
+# Flutter Component: AppBar
+
+## 1. What is `AppBar`?
+
+`AppBar` is the **top bar of a Flutter screen**.
+
+It is usually placed inside the `appBar` property of `Scaffold`.
+
+It is commonly used to display:
+
+* Screen title
+* Back button
+* Menu button
+* Action icons
+* Search button
+* Other controls
+
+Think:
+
+```text
+┌─────────────────────────────┐
+│ ←   My App          🔍  ⋮   │  ← AppBar
+├─────────────────────────────┤
+│                             │
+│           Body              │
+│                             │
+└─────────────────────────────┘
+```
+
+---
+
+# 2. Basic Syntax
+
+```dart
+Scaffold(
+  appBar: AppBar(
+    title: Text("Home"),
+  ),
+
+  body: Center(
+    child: Text("Welcome"),
+  ),
+)
+```
+
+Here:
+
+```text
+Scaffold
+   │
+   ├── appBar
+   │     └── AppBar
+   │
+   └── body
+```
+
+---
+
+# 3. `title`
+
+`title` specifies what appears in the main area of the AppBar.
+
+```dart
+AppBar(
+  title: Text("Home"),
+)
+```
+
+Result:
+
+```text
+┌─────────────────────────────┐
+│ Home                        │
+└─────────────────────────────┘
+```
+
+The title doesn't have to be only `Text`.
+
+You can use another widget:
+
+```dart
+AppBar(
+  title: Row(
+    children: [
+      Icon(Icons.music_note),
+      SizedBox(width: 8),
+      Text("Music"),
+    ],
+  ),
+)
+```
+
+---
+
+# 4. `leading`
+
+`leading` places a widget at the **left side of the AppBar**.
+
+```dart
+AppBar(
+  leading: Icon(Icons.menu),
+  title: Text("Home"),
+)
+```
+
+Result:
+
+```text
+┌─────────────────────────────┐
+│ ☰   Home                    │
+└─────────────────────────────┘
+```
+
+You can use:
+
+```dart
+leading: Icon(Icons.menu)
+```
+
+or:
+
+```dart
+leading: IconButton(
+  onPressed: () {},
+  icon: Icon(Icons.menu),
+)
+```
+
+Common uses:
+
+* Menu button
+* Back button
+* Profile icon
+* Custom button
+
+---
+
+# 5. `actions`
+
+`actions` places widgets on the **right side of the AppBar**.
+
+It accepts a list of widgets.
+
+```dart
+AppBar(
+  title: Text("Home"),
+
+  actions: [
+    IconButton(
+      onPressed: () {},
+      icon: Icon(Icons.search),
+    ),
+
+    IconButton(
+      onPressed: () {},
+      icon: Icon(Icons.more_vert),
+    ),
+  ],
+)
+```
+
+Result:
+
+```text
+┌─────────────────────────────┐
+│ Home                🔍   ⋮  │
+└─────────────────────────────┘
+```
+
+Notice:
+
+```dart
+actions: [
+  widget1,
+  widget2,
+  widget3,
+]
+```
+
+Because `actions` accepts **multiple widgets**.
+
+---
+
+# 6. `backgroundColor`
+
+Changes the AppBar's background color.
+
+```dart
+AppBar(
+  backgroundColor: Colors.blue,
+  title: Text("Home"),
+)
+```
+
+You can use any suitable color.
+
+Example:
+
+```dart
+backgroundColor: Colors.black,
+```
+
+---
+
+# 7. `foregroundColor`
+
+Controls the color of the AppBar's foreground elements.
+
+For example:
+
+* Title
+* Icons
+* Back button
+
+```dart
+AppBar(
+  backgroundColor: Colors.black,
+  foregroundColor: Colors.white,
+
+  title: Text("Home"),
+)
+```
+
+This makes the AppBar background black and its text/icons white.
+
+---
+
+# 8. `elevation`
+
+Controls the **shadow/depth effect** below the AppBar.
+
+```dart
+AppBar(
+  elevation: 5,
+  title: Text("Home"),
+)
+```
+
+Higher elevation generally gives a stronger shadow.
+
+You can remove the shadow:
+
+```dart
+AppBar(
+  elevation: 0,
+  title: Text("Home"),
+)
+```
+
+---
+
+# 9. `centerTitle`
+
+Controls whether the title is centered.
+
+```dart
+AppBar(
+  centerTitle: true,
+  title: Text("Home"),
+)
+```
+
+Result:
+
+```text
+┌─────────────────────────────┐
+│            Home             │
+└─────────────────────────────┘
+```
+
+Without explicitly setting it:
+
+```dart
+AppBar(
+  title: Text("Home"),
+)
+```
+
+the title positioning can follow the platform/theme behavior.
+
+---
+
+# 10. `automaticallyImplyLeading`
+
+Flutter can automatically add a leading widget, such as a **back arrow**, when appropriate.
+
+For example, when navigating from Screen 1 to Screen 2:
+
+```text
+Screen 1
+   ↓
+Screen 2
+
+┌─────────────────────────────┐
+│ ←   Screen 2                │
+└─────────────────────────────┘
+```
+
+You normally **do not need to manually write the back arrow** for ordinary navigation.
+
+Flutter's `AppBar` can infer that a back button should be displayed.
+
+You can disable this automatic behavior:
+
+```dart
+AppBar(
+  automaticallyImplyLeading: false,
+  title: Text("Home"),
+)
+```
+
+This is useful when you want complete control over the leading widget.
+
+---
+
+# 11. Custom Back Button
+
+You can manually create your own back button:
+
+```dart
+AppBar(
+  leading: IconButton(
+    onPressed: () {
+      Navigator.pop(context);
+    },
+
+    icon: Icon(Icons.arrow_back),
+  ),
+
+  title: Text("Details"),
+)
+```
+
+Here:
+
+```dart
+Navigator.pop(context);
+```
+
+returns to the previous screen.
+
+We will study `Navigator` separately.
+
+---
+
+# 12. Complete Example
+
+```dart
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(
+    MaterialApp(
+      debugShowCheckedModeBanner: false,
+
+      home: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.blue,
+          foregroundColor: Colors.white,
+          elevation: 4,
+          centerTitle: true,
+
+          leading: IconButton(
+            onPressed: () {},
+            icon: Icon(Icons.menu),
+          ),
+
+          title: Text("Home"),
+
+          actions: [
+            IconButton(
+              onPressed: () {},
+              icon: Icon(Icons.search),
+            ),
+
+            IconButton(
+              onPressed: () {},
+              icon: Icon(Icons.more_vert),
+            ),
+          ],
+        ),
+
+        body: Center(
+          child: Text("Welcome"),
+        ),
+      ),
+    ),
+  );
+}
+```
+
+The structure is:
+
+```text
+┌─────────────────────────────┐
+│ ☰       Home          🔍 ⋮  │
+├─────────────────────────────┤
+│                             │
+│          Welcome            │
+│                             │
+└─────────────────────────────┘
+```
+
+---
+
+# 13. Important Properties Summary
+
+| Property                    | Purpose                           |
+| --------------------------- | --------------------------------- |
+| `title`                     | Main title                        |
+| `leading`                   | Widget on the left                |
+| `actions`                   | Widgets on the right              |
+| `backgroundColor`           | AppBar background                 |
+| `foregroundColor`           | Text/icon color                   |
+| `elevation`                 | Shadow/depth                      |
+| `centerTitle`               | Centers the title                 |
+| `automaticallyImplyLeading` | Controls automatic leading widget |
+
+---
+
+# 14. Where is `AppBar` Used?
+
+Almost every screen that needs a standard top navigation/header can use an AppBar.
+
+Examples:
+
+### Banking app
+
+```text
+←  Account                    ⋮
+```
+
+### Music app
+
+```text
+☰  Music                 🔍
+```
+
+### Shopping app
+
+```text
+←  Product Details       🛒
+```
+
+### Chat app
+
+```text
+←  John                  📞
+```
+
+---
+
+# 15. Important Concept
+
+`AppBar` does **not normally stand alone**.
+
+It is commonly placed inside:
+
+```dart
+Scaffold(
+  appBar: AppBar(
+    ...
+  ),
+)
+```
+
+So remember the relationship:
+
+```text
+MaterialApp
+     ↓
+Scaffold
+     ↓
+AppBar
+```
+
+---
+
+# 16. Quick Revision
+
+### `MaterialApp`
+
+```text
+Entire application
+```
+
+### `Scaffold`
+
+```text
+Structure of one screen
+```
+
+### `AppBar`
+
+```text
+Top bar of that screen
+```
+
+Example:
+
+```dart
+MaterialApp(
+  home: Scaffold(
+    appBar: AppBar(
+      title: Text("Home"),
+    ),
+  ),
+)
+```
+
+## One-Line Definition
+
+**`AppBar` is a Material Design widget used to create the top app bar/header of a Flutter screen.**

@@ -1,0 +1,771 @@
+# Flutter Component: Text
+
+## 1. What is `Text`?
+
+`Text` is a Flutter widget used to **display text on the screen**.
+
+Examples:
+
+* Names
+* Headings
+* Labels
+* Descriptions
+* Messages
+* Button text
+* Form labels
+
+Example:
+
+```dart
+Text("Hello Flutter")
+```
+
+Result:
+
+```text
+Hello Flutter
+```
+
+---
+
+# 2. Basic Syntax
+
+```dart
+Text("Hello")
+```
+
+Example inside a screen:
+
+```dart
+Scaffold(
+  body: Center(
+    child: Text("Welcome"),
+  ),
+)
+```
+
+---
+
+# 3. Displaying Different Text
+
+```dart
+Text("Hello")
+Text("Welcome to my app")
+Text("₹500")
+Text("Login")
+Text("Username")
+```
+
+The text must normally be provided as a `String`.
+
+```dart
+Text("Hello")
+```
+
+Here:
+
+```text
+"Hello"
+   ↓
+String
+   ↓
+Text widget displays it
+```
+
+---
+
+# 4. `style`
+
+The `style` property is used to **change the appearance of text**.
+
+```dart
+Text(
+  "Hello Flutter",
+  style: TextStyle(
+    fontSize: 25,
+  ),
+)
+```
+
+
+`TextStyle` provides many properties for styling.
+
+Important ones include:
+
+```text
+fontSize
+fontWeight
+fontStyle
+color
+letterSpacing
+wordSpacing
+decoration
+height
+```
+
+---
+
+# 5. `fontSize`
+
+Controls the size of the text.
+
+```dart
+Text(
+  "Hello",
+  style: TextStyle(
+    fontSize: 30,
+  ),
+)
+```
+
+Examples:
+
+```dart
+fontSize: 12
+fontSize: 16
+fontSize: 20
+fontSize: 30
+fontSize: 50
+```
+
+Larger number = larger text.
+
+---
+
+# 6. `fontWeight`
+
+Controls how thick the text appears.
+
+```dart
+Text(
+  "Hello",
+  style: TextStyle(
+    fontWeight: FontWeight.bold,
+  ),
+)
+```
+
+Common values:
+
+```dart
+FontWeight.normal
+FontWeight.bold
+FontWeight.w100
+FontWeight.w300
+FontWeight.w500
+FontWeight.w600
+FontWeight.w700
+FontWeight.w900
+```
+
+Example:
+
+```dart
+Text(
+  "Important",
+  style: TextStyle(
+    fontWeight: FontWeight.bold,
+  ),
+)
+```
+
+---
+
+# 7. `color`
+
+Changes the text color.
+
+```dart
+Text(
+  "Hello",
+  style: TextStyle(
+    color: Colors.blue,
+  ),
+)
+```
+
+Example:
+
+```dart
+Text(
+  "Error",
+  style: TextStyle(
+    color: Colors.red,
+  ),
+)
+```
+
+---
+
+# 8. `fontStyle`
+
+Controls whether the text is normal or italic.
+
+```dart
+Text(
+  "Hello",
+  style: TextStyle(
+    fontStyle: FontStyle.italic,
+  ),
+)
+```
+
+Common values:
+
+```dart
+FontStyle.normal
+FontStyle.italic
+```
+
+---
+
+# 9. `letterSpacing`
+
+Controls the space between individual letters.
+
+```dart
+Text(
+  "HELLO",
+  style: TextStyle(
+    letterSpacing: 3,
+  ),
+)
+```
+
+Conceptually:
+
+```text
+Normal:
+HELLO
+
+More letter spacing:
+H E L L O
+```
+
+Useful for headings, labels, and special UI designs.
+
+---
+
+# 10. `wordSpacing`
+
+Controls the space between words.
+
+```dart
+Text(
+  "Hello Flutter",
+  style: TextStyle(
+    wordSpacing: 10,
+  ),
+)
+```
+
+---
+
+# 11. `decoration`
+
+Adds decorations such as underline or line-through.
+
+### Underline
+
+```dart
+Text(
+  "Flutter",
+  style: TextStyle(
+    decoration: TextDecoration.underline,
+  ),
+)
+```
+
+### Line through
+
+```dart
+Text(
+  "Old Price",
+  style: TextStyle(
+    decoration: TextDecoration.lineThrough,
+  ),
+)
+```
+
+Common values:
+
+```dart
+TextDecoration.underline
+TextDecoration.lineThrough
+TextDecoration.overline
+TextDecoration.none
+```
+
+---
+
+# 12. `textAlign`
+
+Controls the horizontal alignment of text.
+
+```dart
+Text(
+  "Hello Flutter",
+  textAlign: TextAlign.center,
+)
+```
+
+Common values:
+
+```dart
+TextAlign.left
+TextAlign.right
+TextAlign.center
+TextAlign.justify
+TextAlign.start
+TextAlign.end
+```
+
+Example:
+
+```dart
+Text(
+  "Welcome to my application",
+  textAlign: TextAlign.center,
+)
+```
+
+### Important
+
+`textAlign` controls how the text is aligned **inside the space available to the Text widget**.
+
+It does not necessarily position the entire Text widget itself.
+
+---
+
+# 13. `maxLines`
+
+Controls the maximum number of lines that the text can occupy.
+
+```dart
+Text(
+  "This is a very long description of a product.",
+  maxLines: 2,
+)
+```
+
+The text can occupy at most 2 lines.
+
+This is especially useful for:
+
+* Product descriptions
+* News cards
+* Post previews
+* Long titles
+
+---
+
+# 14. `overflow`
+
+Controls what happens when text doesn't fit within the allowed space.
+
+Example:
+
+```dart
+Text(
+  "This is a very long text",
+  maxLines: 1,
+  overflow: TextOverflow.ellipsis,
+)
+```
+
+It can appear approximately as:
+
+```text
+This is a very long...
+```
+
+Common values:
+
+```dart
+TextOverflow.clip
+TextOverflow.fade
+TextOverflow.ellipsis
+TextOverflow.visible
+```
+
+### Most commonly useful
+
+```dart
+TextOverflow.ellipsis
+```
+
+This is useful when you want:
+
+```text
+Long text that doesn't fit...
+```
+
+instead of allowing the text to break your UI.
+
+---
+
+# 15. `softWrap`
+
+Controls whether text is allowed to automatically wrap onto another line.
+
+```dart
+Text(
+  "This is a long sentence",
+  softWrap: true,
+)
+```
+
+Usually, Flutter wraps text automatically when appropriate.
+
+---
+
+# 16. `height`
+
+Controls the line height.
+
+```dart
+Text(
+  "Hello Flutter",
+  style: TextStyle(
+    height: 1.5,
+  ),
+)
+```
+
+This becomes useful when displaying paragraphs or multiple lines of text.
+
+---
+
+# 17. Combining Properties
+
+You can combine multiple `TextStyle` properties.
+
+```dart
+Text(
+  "Welcome",
+  style: TextStyle(
+    fontSize: 30,
+    fontWeight: FontWeight.bold,
+    color: Colors.blue,
+    letterSpacing: 1,
+  ),
+)
+```
+
+Think:
+
+```text
+Text
+ │
+ └── TextStyle
+      ├── fontSize
+      ├── fontWeight
+      ├── color
+      ├── letterSpacing
+      └── ...
+```
+
+---
+
+# 18. Real-World Example
+
+Suppose you are creating a product card:
+
+```dart
+Column(
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+
+    Text(
+      "Wireless Headphones",
+      style: TextStyle(
+        fontSize: 20,
+        fontWeight: FontWeight.bold,
+      ),
+    ),
+
+    Text(
+      "Noise cancellation headphones",
+      style: TextStyle(
+        fontSize: 14,
+        color: Colors.grey,
+      ),
+    ),
+
+    Text(
+      "₹2,999",
+      style: TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.bold,
+        color: Colors.green,
+      ),
+    ),
+  ],
+)
+```
+
+This gives you three different types of text:
+
+```text
+Wireless Headphones
+Noise cancellation headphones
+₹2,999
+```
+
+Each can have its own style.
+
+---
+
+# 19. `Text` with Variables
+
+You don't always have to hard-code the text.
+
+You can use a variable:
+
+```dart
+String name = "Rahul";
+
+Text(
+  name,
+)
+```
+
+Result:
+
+```text
+Rahul
+```
+
+You can also combine variables with text:
+
+```dart
+String name = "Rahul";
+
+Text(
+  "Welcome $name",
+)
+```
+
+Result:
+
+```text
+Welcome Rahul
+```
+
+This is called **string interpolation**.
+
+---
+
+# 20. Text Inside `Row`
+
+You can use `Text` inside layout widgets.
+
+```dart
+Row(
+  children: [
+    Icon(Icons.person),
+    Text(" Rahul"),
+  ],
+)
+```
+
+Structure:
+
+```text
+Row
+│
+├── Icon
+└── Text
+```
+
+---
+
+# 21. Text Inside `Column`
+
+```dart
+Column(
+  children: [
+    Text("Username"),
+    Text("Password"),
+    Text("Email"),
+  ],
+)
+```
+
+Structure:
+
+```text
+Column
+│
+├── Username
+├── Password
+└── Email
+```
+
+---
+
+# 22. Complete Example
+
+```dart
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(
+    MaterialApp(
+      debugShowCheckedModeBanner: false,
+
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text("Text Example"),
+        ),
+
+        body: Center(
+          child: Text(
+            "Hello Flutter",
+            textAlign: TextAlign.center,
+
+            style: TextStyle(
+              fontSize: 30,
+              fontWeight: FontWeight.bold,
+              color: Colors.blue,
+              letterSpacing: 1,
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+}
+```
+
+---
+
+# 23. Common Mistake
+
+### Mistake:
+
+Trying to use `TextStyle` as a widget:
+
+```dart
+TextStyle(
+  fontSize: 20,
+)
+```
+
+`TextStyle` is **not a widget**.
+
+It describes how text should look.
+
+Correct:
+
+```dart
+Text(
+  "Hello",
+  style: TextStyle(
+    fontSize: 20,
+  ),
+)
+```
+
+Think:
+
+```text
+Text
+ ↓
+Displays the text
+
+TextStyle
+ ↓
+Controls how the text looks
+```
+
+---
+
+# 24. Where is `Text` Used?
+
+`Text` is one of the most frequently used Flutter widgets.
+
+It is used for:
+
+* App titles
+* Headings
+* Labels
+* Usernames
+* Prices
+* Descriptions
+* Error messages
+* Buttons
+* List items
+* Forms
+* Cards
+* Notifications
+* Status messages
+
+Almost every normal Flutter application uses `Text`.
+
+---
+
+# 25. Quick Revision
+
+Basic:
+
+```dart
+Text("Hello")
+```
+
+Styled:
+
+```dart
+Text(
+  "Hello",
+  style: TextStyle(
+    fontSize: 20,
+    fontWeight: FontWeight.bold,
+    color: Colors.blue,
+  ),
+)
+```
+
+Alignment:
+
+```dart
+Text(
+  "Hello",
+  textAlign: TextAlign.center,
+)
+```
+
+Long text:
+
+```dart
+Text(
+  "Very long text...",
+  maxLines: 2,
+  overflow: TextOverflow.ellipsis,
+)
+```
+
+---
+
+# 26. Most Important Things to Remember
+
+```text
+Text
+ │
+ ├── displays text
+ │
+ └── TextStyle
+      │
+      ├── fontSize
+      ├── fontWeight
+      ├── color
+      ├── fontStyle
+      ├── letterSpacing
+      ├── wordSpacing
+      ├── decoration
+      └── height
+```
+
+## One-Line Definition
+
+**`Text` is a Flutter widget used to display and style text on the screen.**

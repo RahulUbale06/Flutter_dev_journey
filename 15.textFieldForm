@@ -1,0 +1,497 @@
+# Flutter — Form & TextFormField
+
+## 1. What is `Form`?
+
+`Form` is a widget used to **group and manage multiple input fields**.
+
+For example, a login form may contain:
+
+* Email
+* Password
+* Phone number
+* Submit button
+
+`Form` makes it easy to **validate all fields together**.
+
+### Basic structure
+
+```dart
+Form(
+  key: formKey,
+  child: Column(
+    children: [
+      TextFormField(),
+      TextFormField(),
+    ],
+  ),
+)
+```
+
+---
+
+# 2. What is `TextFormField`?
+
+`TextFormField` is similar to `TextField`, but it is designed to work with a `Form`.
+
+The main advantage is **validation**.
+
+```dart
+TextFormField(
+  decoration: InputDecoration(
+    labelText: "Email",
+    border: OutlineInputBorder(),
+  ),
+)
+```
+
+---
+
+# 3. `TextField` vs `TextFormField`
+
+| TextField                   | TextFormField               |
+| --------------------------- | --------------------------- |
+| Basic input                 | Form input                  |
+| No built-in form validation | Supports `validator`        |
+| Used for simple inputs      | Used for login/signup/forms |
+| Works independently         | Usually used inside `Form`  |
+
+### Simple rule
+
+**Simple input → `TextField`**
+
+**Form + validation → `TextFormField`**
+
+---
+
+# 4. Form Key
+
+A `GlobalKey<FormState>` is commonly used to control the form.
+
+```dart
+final formKey = GlobalKey<FormState>();
+```
+
+Then:
+
+```dart
+Form(
+  key: formKey,
+  child: ...
+)
+```
+
+Now we can access the form using:
+
+```dart
+formKey.currentState
+```
+
+---
+
+# 5. Validation
+
+The most important property is:
+
+```dart
+validator:
+```
+
+Example:
+
+```dart
+TextFormField(
+  validator: (value) {
+    if (value == null || value.isEmpty) {
+      return "Please enter your name";
+    }
+
+    return null;
+  },
+)
+```
+
+### Important rule
+
+Inside `validator`:
+
+```dart
+return "Error message";
+```
+
+means **validation failed**.
+
+```dart
+return null;
+```
+
+means **validation passed**.
+
+---
+
+# 6. Complete Form Example
+
+```dart
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(
+    MaterialApp(
+      home: LoginPage(),
+      debugShowCheckedModeBanner: false,
+    ),
+  );
+}
+
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+
+  final formKey = GlobalKey<FormState>();
+
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  void submitForm() {
+
+    if (formKey.currentState!.validate()) {
+
+      print("Email: ${emailController.text}");
+      print("Password: ${passwordController.text}");
+
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Login"),
+      ),
+
+      body: Padding(
+        padding: EdgeInsets.all(20),
+
+        child: Form(
+          key: formKey,
+
+          child: Column(
+            children: [
+
+              TextFormField(
+                controller: emailController,
+
+                decoration: InputDecoration(
+                  labelText: "Email",
+                  hintText: "Enter your email",
+                  border: OutlineInputBorder(),
+                ),
+
+                validator: (value) {
+
+                  if (value == null || value.isEmpty) {
+                    return "Email is required";
+                  }
+
+                  return null;
+                },
+              ),
+
+              SizedBox(height: 20),
+
+              TextFormField(
+                controller: passwordController,
+
+                obscureText: true,
+
+                decoration: InputDecoration(
+                  labelText: "Password",
+                  border: OutlineInputBorder(),
+                ),
+
+                validator: (value) {
+
+                  if (value == null || value.isEmpty) {
+                    return "Password is required";
+                  }
+
+                  if (value.length < 6) {
+                    return "Password must be at least 6 characters";
+                  }
+
+                  return null;
+                },
+              ),
+
+              SizedBox(height: 20),
+
+              ElevatedButton(
+                onPressed: submitForm,
+                child: Text("Login"),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+```
+
+---
+
+# 7. How the Form Works
+
+Think of it like this:
+
+```text
+Form
+ │
+ ├── Email TextFormField
+ │       ↓
+ │    validator
+ │
+ ├── Password TextFormField
+ │       ↓
+ │    validator
+ │
+ └── Login Button
+         ↓
+   validate()
+         ↓
+ ┌───────────────┐
+ │ All valid?    │
+ └───────────────┘
+      ↓       ↓
+     YES      NO
+      ↓        ↓
+  Submit    Show errors
+```
+
+The important line is:
+
+```dart
+if (formKey.currentState!.validate())
+```
+
+When this runs, Flutter calls the `validator` of each `TextFormField`.
+
+---
+
+# 8. Reading Form Values
+
+Using controllers:
+
+```dart
+final emailController = TextEditingController();
+```
+
+Then:
+
+```dart
+emailController.text
+```
+
+gets the entered value.
+
+Example:
+
+```dart
+print(emailController.text);
+```
+
+For clearing:
+
+```dart
+emailController.clear();
+```
+
+---
+
+# 9. Useful `TextFormField` Properties
+
+```dart
+TextFormField(
+  controller: controller,
+
+  obscureText: true,
+
+  keyboardType: TextInputType.emailAddress,
+
+  maxLength: 50,
+
+  maxLines: 1,
+
+  decoration: InputDecoration(
+    labelText: "Email",
+    hintText: "Enter email",
+    prefixIcon: Icon(Icons.email),
+    suffixIcon: Icon(Icons.visibility),
+    border: OutlineInputBorder(),
+  ),
+
+  validator: (value) {
+    if (value == null || value.isEmpty) {
+      return "Required";
+    }
+
+    return null;
+  },
+)
+```
+
+Important properties:
+
+* `controller` → read/set/clear input
+* `validator` → validate input
+* `obscureText` → hide password
+* `keyboardType` → choose keyboard type
+* `maxLength` → limit characters
+* `maxLines` → number of lines
+* `decoration` → design the field
+* `onChanged` → runs whenever text changes
+* `onSaved` → saves the field value when the form is saved
+
+---
+
+# 10. Form Methods
+
+### Validate
+
+```dart
+formKey.currentState!.validate();
+```
+
+Checks all fields.
+
+### Save
+
+```dart
+formKey.currentState!.save();
+```
+
+Calls the `onSaved` function of each field.
+
+### Reset
+
+```dart
+formKey.currentState!.reset();
+```
+
+Resets the form and its validation state.
+
+---
+
+# 11. `onSaved`
+
+Example:
+
+```dart
+String email = "";
+
+TextFormField(
+  onSaved: (value) {
+    email = value!;
+  },
+)
+```
+
+Then:
+
+```dart
+formKey.currentState!.save();
+```
+
+will execute `onSaved`.
+
+In beginner projects, **controllers are usually easier** when you need to directly read or clear values.
+
+---
+
+# 12. Real-World Uses
+
+`Form` + `TextFormField` are commonly used for:
+
+* Login
+* Signup
+* Registration
+* Contact forms
+* Profile editing
+* Change password
+* Address forms
+* Payment forms
+* Search/filter forms
+* Settings forms
+
+---
+
+# 13. Most Important Pattern to Remember
+
+```dart
+final formKey = GlobalKey<FormState>();
+```
+
+```dart
+Form(
+  key: formKey,
+
+  child: Column(
+    children: [
+
+      TextFormField(
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return "Required";
+          }
+
+          return null;
+        },
+      ),
+
+      ElevatedButton(
+        onPressed: () {
+
+          if (formKey.currentState!.validate()) {
+            // Form is valid
+          }
+
+        },
+        child: Text("Submit"),
+      ),
+    ],
+  ),
+)
+```
+
+### Mental model
+
+```text
+TextFormField
+      ↓
+takes input
+      ↓
+validator checks input
+      ↓
+Form collects fields
+      ↓
+validate()
+      ↓
+Valid → continue
+Invalid → show error
+```
+
+## One-line revision
+
+**`Form` manages multiple form fields, while `TextFormField` provides input + validation for individual fields.**

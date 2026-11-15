@@ -1,0 +1,428 @@
+# Flutter — Buttons
+
+Buttons are used to let the user **perform an action**, such as:
+
+* Login
+* Submit a form
+* Save data
+* Delete something
+* Navigate to another screen
+* Open a menu
+* Add an item
+
+Flutter's most important buttons are:
+
+1. `ElevatedButton`
+2. `OutlinedButton`
+3. `TextButton`
+4. `IconButton`
+
+---
+
+## 1. ElevatedButton
+
+A filled button used for an important or primary action.
+
+```dart
+ElevatedButton(
+  onPressed: () {
+    print("Login clicked");
+  },
+  child: Text("Login"),
+)
+```
+
+### Common use
+
+```text
+Login
+Submit
+Save
+Register
+Continue
+```
+
+### Styling
+
+```dart
+ElevatedButton(
+  style: ElevatedButton.styleFrom(
+    backgroundColor: Colors.blue,
+    foregroundColor: Colors.white,
+  ),
+
+  onPressed: () {
+    print("Clicked");
+  },
+
+  child: Text("Submit"),
+)
+```
+
+### Important properties
+
+```text
+onPressed → action when clicked
+child     → content inside button
+style     → button appearance
+```
+
+---
+
+# 2. OutlinedButton
+
+A button with an outline/border.
+
+```dart
+OutlinedButton(
+  onPressed: () {
+    print("Cancel clicked");
+  },
+  child: Text("Cancel"),
+)
+```
+
+### Common use
+
+```text
+Cancel
+Edit
+View Details
+Secondary actions
+```
+
+### Styling
+
+```dart
+OutlinedButton(
+  style: OutlinedButton.styleFrom(
+    side: BorderSide(
+      color: Colors.blue,
+    ),
+  ),
+
+  onPressed: () {},
+
+  child: Text("Edit"),
+)
+```
+
+---
+
+# 3. TextButton
+
+A button that looks mainly like text, without a filled background.
+
+```dart
+TextButton(
+  onPressed: () {
+    print("Forgot Password");
+  },
+  child: Text("Forgot Password?"),
+)
+```
+
+### Common use
+
+```text
+Forgot Password?
+Skip
+Learn More
+See All
+Cancel
+```
+
+Use it when the action has **less visual importance**.
+
+---
+
+# 4. IconButton
+
+A clickable button containing an icon.
+
+```dart
+IconButton(
+  onPressed: () {
+    print("Search clicked");
+  },
+  icon: Icon(Icons.search),
+)
+```
+
+### Common use
+
+```text
+Search
+Delete
+Edit
+Settings
+Menu
+Favorite
+Play/Pause
+```
+
+### Styling
+
+```dart
+IconButton(
+  icon: Icon(Icons.delete),
+
+  color: Colors.red,
+
+  iconSize: 30,
+
+  onPressed: () {
+    print("Delete");
+  },
+)
+```
+
+---
+
+# 5. Button with Icon + Text
+
+`ElevatedButton` can contain an icon and text:
+
+```dart
+ElevatedButton.icon(
+  onPressed: () {},
+
+  icon: Icon(Icons.login),
+
+  label: Text("Login"),
+)
+```
+
+Similarly:
+
+```dart
+OutlinedButton.icon(
+  onPressed: () {},
+
+  icon: Icon(Icons.edit),
+
+  label: Text("Edit"),
+)
+```
+
+This is useful in real applications.
+
+---
+
+# 6. Button with Full Width
+
+Use `SizedBox` when you want a button to occupy the available width.
+
+```dart
+SizedBox(
+  width: double.infinity,
+
+  child: ElevatedButton(
+    onPressed: () {},
+    child: Text("Login"),
+  ),
+)
+```
+
+Result:
+
+```text
+┌──────────────────────────────┐
+│            Login             │
+└──────────────────────────────┘
+```
+
+Very common in login and signup screens.
+
+---
+
+# 7. Disable a Button
+
+This is important.
+
+If:
+
+```dart
+onPressed: null
+```
+
+the button becomes disabled.
+
+```dart
+ElevatedButton(
+  onPressed: null,
+  child: Text("Submit"),
+)
+```
+
+If `onPressed` contains a function:
+
+```dart
+onPressed: () {}
+```
+
+the button is enabled.
+
+### Remember
+
+```text
+onPressed: () {}  → enabled
+
+onPressed: null   → disabled
+```
+
+---
+
+# 8. Buttons with Form
+
+Buttons are commonly used with `Form`.
+
+Example:
+
+```dart
+ElevatedButton(
+  onPressed: () {
+
+    if (formKey.currentState!.validate()) {
+
+      print("Form is valid");
+
+    }
+
+  },
+
+  child: Text("Submit"),
+)
+```
+
+Flow:
+
+```text
+User enters data
+       ↓
+Clicks Submit
+       ↓
+validate()
+       ↓
+ ┌─────┴─────┐
+Valid       Invalid
+ ↓             ↓
+Continue    Show errors
+```
+
+---
+
+# 9. Button Types — Quick Difference
+
+| Button           | Appearance | Typical use         |
+| ---------------- | ---------- | ------------------- |
+| `ElevatedButton` | Filled     | Main/primary action |
+| `OutlinedButton` | Border     | Secondary action    |
+| `TextButton`     | Text       | Low-emphasis action |
+| `IconButton`     | Icon       | Small icon action   |
+
+### Easy memory
+
+```text
+Elevated  → Important action
+Outlined  → Secondary action
+Text      → Simple/low emphasis
+Icon      → Icon-only action
+```
+
+---
+
+# 10. Real Login Screen Example
+
+```dart
+Column(
+  children: [
+
+    TextFormField(
+      decoration: InputDecoration(
+        labelText: "Email",
+        border: OutlineInputBorder(),
+      ),
+    ),
+
+    SizedBox(height: 15),
+
+    TextFormField(
+      obscureText: true,
+
+      decoration: InputDecoration(
+        labelText: "Password",
+        border: OutlineInputBorder(),
+      ),
+    ),
+
+    SizedBox(height: 20),
+
+    SizedBox(
+      width: double.infinity,
+
+      child: ElevatedButton(
+        onPressed: () {
+          print("Login");
+        },
+
+        child: Text("Login"),
+      ),
+    ),
+
+    TextButton(
+      onPressed: () {
+        print("Forgot password");
+      },
+
+      child: Text("Forgot Password?"),
+    ),
+  ],
+)
+```
+
+---
+
+# 11. Most Important Syntax
+
+### ElevatedButton
+
+```dart
+ElevatedButton(
+  onPressed: () {},
+  child: Text("Submit"),
+)
+```
+
+### OutlinedButton
+
+```dart
+OutlinedButton(
+  onPressed: () {},
+  child: Text("Cancel"),
+)
+```
+
+### TextButton
+
+```dart
+TextButton(
+  onPressed: () {},
+  child: Text("Skip"),
+)
+```
+
+### IconButton
+
+```dart
+IconButton(
+  onPressed: () {},
+  icon: Icon(Icons.delete),
+)
+```
+
+---
+
+## One-line revision
+
+**Buttons allow users to perform actions; `ElevatedButton` is generally for primary actions, `OutlinedButton` for secondary actions, `TextButton` for low-emphasis actions, and `IconButton` for icon-based actions.**

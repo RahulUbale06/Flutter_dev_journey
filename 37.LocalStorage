@@ -1,0 +1,405 @@
+# Local Storage — SharedPreferences
+
+## 1. What is Local Storage?
+
+Local storage means **saving data on the user's phone** so the app can use it later.
+
+For example:
+
+```text
+Login status
+Dark mode preference
+Selected language
+Selected currency
+Username
+First-time app opened
+Simple settings
+```
+
+The data remains even after:
+
+```text
+App closes
+↓
+Phone restarts
+↓
+App opens again
+```
+
+---
+
+# 2. SharedPreferences
+
+For **small/simple data**, Flutter apps commonly use `shared_preferences`.
+
+It stores data as key-value pairs.
+
+Think of it like:
+
+```text
+Key              Value
+
+"isLoggedIn"     true
+"username"       "Rahul"
+"age"            21
+"darkMode"       true
+```
+
+---
+
+# 3. Add the Package
+
+Add the `shared_preferences` package to your project.
+
+Then import:
+
+```dart
+import 'package:shared_preferences/shared_preferences.dart';
+```
+
+---
+
+# 4. Saving Data
+
+First get the preferences instance:
+
+```dart
+final prefs = await SharedPreferences.getInstance();
+```
+
+Then save data.
+
+### String
+
+```dart
+await prefs.setString("username", "Rahul");
+```
+
+### Integer
+
+```dart
+await prefs.setInt("age", 21);
+```
+
+### Boolean
+
+```dart
+await prefs.setBool("isLoggedIn", true);
+```
+
+### Double
+
+```dart
+await prefs.setDouble("price", 99.99);
+```
+
+---
+
+# 5. Reading Data
+
+### String
+
+```dart
+String? username = prefs.getString("username");
+```
+
+### Integer
+
+```dart
+int? age = prefs.getInt("age");
+```
+
+### Boolean
+
+```dart
+bool? isLoggedIn = prefs.getBool("isLoggedIn");
+```
+
+The `?` means the value may not exist.
+
+For example:
+
+```dart
+String? username = prefs.getString("username");
+```
+
+If `"username"` was never saved, the result can be `null`.
+
+---
+
+# 6. Complete Example
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+class HomeScreen extends StatelessWidget {
+
+  const HomeScreen({super.key});
+
+  Future<void> saveName() async {
+
+    final prefs = await SharedPreferences.getInstance();
+
+    await prefs.setString("username", "Rahul");
+  }
+
+  Future<void> readName() async {
+
+    final prefs = await SharedPreferences.getInstance();
+
+    String? username = prefs.getString("username");
+
+    print(username);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Local Storage"),
+      ),
+
+      body: Column(
+        children: [
+
+          ElevatedButton(
+            onPressed: saveName,
+            child: Text("Save"),
+          ),
+
+          ElevatedButton(
+            onPressed: readName,
+            child: Text("Read"),
+          ),
+
+        ],
+      ),
+    );
+  }
+}
+```
+
+---
+
+# 7. Removing Data
+
+To remove one value:
+
+```dart
+await prefs.remove("username");
+```
+
+To clear all SharedPreferences data:
+
+```dart
+await prefs.clear();
+```
+
+Be careful with `clear()` because it removes **all stored preferences**.
+
+---
+
+# 8. Real Example — Remember Login
+
+Suppose the user logs in successfully.
+
+Save:
+
+```dart
+await prefs.setBool("isLoggedIn", true);
+```
+
+When the app starts:
+
+```dart
+final prefs = await SharedPreferences.getInstance();
+
+bool isLoggedIn =
+    prefs.getBool("isLoggedIn") ?? false;
+```
+
+Then:
+
+```text
+isLoggedIn == true
+        ↓
+Open Home Screen
+
+isLoggedIn == false
+        ↓
+Open Login Screen
+```
+
+This is commonly used for simple login/session flags.
+
+---
+
+# 9. `??` Meaning
+
+You will frequently see:
+
+```dart
+prefs.getBool("isLoggedIn") ?? false
+```
+
+Meaning:
+
+```text
+Try to get isLoggedIn
+        ↓
+If value exists → use it
+        ↓
+If null → use false
+```
+
+Example:
+
+```dart
+String name =
+    prefs.getString("username") ?? "Guest";
+```
+
+If no username exists:
+
+```text
+name = "Guest"
+```
+
+---
+
+# 10. SharedPreferences is NOT a Full Database
+
+Use SharedPreferences for small/simple values.
+
+### Good:
+
+```text
+isLoggedIn
+darkMode
+username
+language
+selectedCurrency
+firstLaunch
+```
+
+### Not ideal:
+
+```text
+1000 products
+large music library
+complex relationships
+large structured data
+```
+
+For that, use a database such as **SQLite** or another local database solution.
+
+---
+
+# 11. SharedPreferences + State
+
+Suppose the user switches dark mode.
+
+First update the UI:
+
+```dart
+setState(() {
+  isDark = true;
+});
+```
+
+Then save the preference:
+
+```dart
+final prefs = await SharedPreferences.getInstance();
+
+await prefs.setBool("darkMode", true);
+```
+
+Next time the app starts:
+
+```dart
+final prefs = await SharedPreferences.getInstance();
+
+bool isDark =
+    prefs.getBool("darkMode") ?? false;
+```
+
+So:
+
+```text
+User changes setting
+        ↓
+setState()
+        ↓
+UI changes
+        ↓
+SharedPreferences
+        ↓
+Setting saved
+        ↓
+App reopened
+        ↓
+Saved setting loaded
+```
+
+---
+
+# 12. Important Methods
+
+Remember these:
+
+```dart
+setString()
+getString()
+
+setInt()
+getInt()
+
+setBool()
+getBool()
+
+setDouble()
+getDouble()
+
+remove()
+clear()
+```
+
+---
+
+# 13. Easy Memory
+
+```text
+SharedPreferences
+        ↓
+Small local data
+        ↓
+Key → Value
+```
+
+Example:
+
+```text
+"darkMode" → true
+"isLoggedIn" → true
+"username" → "Rahul"
+```
+
+### Main pattern
+
+```dart
+final prefs = await SharedPreferences.getInstance();
+
+await prefs.setBool("isLoggedIn", true);
+
+bool loggedIn =
+    prefs.getBool("isLoggedIn") ?? false;
+```
+
+### Remember
+
+**SharedPreferences = simple data**
+
+**SQLite/database = structured/large data**

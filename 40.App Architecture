@@ -1,0 +1,477 @@
+# Flutter Project Architecture
+
+## 1. Why Do We Need Architecture?
+
+When learning Flutter, you might initially put everything inside:
+
+```text
+lib/
+└── main.dart
+```
+
+That's fine for small practice apps.
+
+But a real app can contain:
+
+```text
+20+ screens
+API calls
+Models
+Images
+State management
+Local database
+Authentication
+Reusable widgets
+```
+
+Putting everything into `main.dart` becomes difficult to maintain.
+
+So we divide the code into folders.
+
+---
+
+# 2. Basic Structure
+
+A good beginner-friendly structure is:
+
+```text
+lib/
+│
+├── main.dart
+│
+├── screens/
+│   ├── home_screen.dart
+│   ├── login_screen.dart
+│   └── profile_screen.dart
+│
+├── widgets/
+│   ├── custom_button.dart
+│   └── custom_textfield.dart
+│
+├── models/
+│   └── user.dart
+│
+├── services/
+│   └── api_service.dart
+│
+└── providers/
+    └── user_provider.dart
+```
+
+Each folder has a purpose.
+
+---
+
+# 3. `main.dart`
+
+`main.dart` is usually the **starting point** of the application.
+
+Example:
+
+```dart
+void main() {
+  runApp(MyApp());
+}
+```
+
+It can contain your top-level:
+
+```text
+MaterialApp
+Theme
+Routes
+Providers
+App configuration
+```
+
+Avoid putting the entire application inside it.
+
+---
+
+# 4. `screens/`
+
+Put complete screens/pages here.
+
+Examples:
+
+```text
+screens/
+├── login_screen.dart
+├── home_screen.dart
+├── profile_screen.dart
+├── settings_screen.dart
+└── details_screen.dart
+```
+
+Example:
+
+```dart
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Home"),
+      ),
+      body: Center(
+        child: Text("Home"),
+      ),
+    );
+  }
+}
+```
+
+A screen usually represents something the user sees as a page.
+
+---
+
+# 5. `widgets/`
+
+Put **reusable UI components** here.
+
+For example, if many screens use the same button:
+
+```text
+widgets/
+└── custom_button.dart
+```
+
+Example:
+
+```dart
+class CustomButton extends StatelessWidget {
+
+  final String text;
+  final VoidCallback onPressed;
+
+  const CustomButton({
+    super.key,
+    required this.text,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: onPressed,
+        child: Text(text),
+      ),
+    );
+  }
+}
+```
+
+Then use it:
+
+```dart
+CustomButton(
+  text: "Login",
+  onPressed: () {},
+)
+```
+
+Instead of rewriting the same button on every screen.
+
+---
+
+# 6. `models/`
+
+Models represent your **data**.
+
+You already learned this with JSON.
+
+Example:
+
+```text
+models/
+└── user.dart
+```
+
+```dart
+class User {
+
+  final int id;
+  final String name;
+  final String email;
+
+  User({
+    required this.id,
+    required this.name,
+    required this.email,
+  });
+
+  factory User.fromJson(Map<String, dynamic> json) {
+    return User(
+      id: json["id"],
+      name: json["name"],
+      email: json["email"],
+    );
+  }
+}
+```
+
+So:
+
+```text
+JSON
+ ↓
+User Model
+ ↓
+UI
+```
+
+---
+
+# 7. `services/`
+
+Services handle things such as:
+
+* API calls
+* Database operations
+* Authentication
+* Other external operations
+
+Example:
+
+```text
+services/
+└── api_service.dart
+```
+
+Instead of putting API code directly inside your screen.
+
+Example:
+
+```dart
+class ApiService {
+
+  Future<void> getUsers() async {
+    // API code
+  }
+
+}
+```
+
+Then the screen can call:
+
+```dart
+ApiService().getUsers();
+```
+
+The screen doesn't need to contain all the API logic.
+
+---
+
+# 8. `providers/`
+
+If you're using Provider for state management:
+
+```text
+providers/
+├── user_provider.dart
+├── cart_provider.dart
+└── theme_provider.dart
+```
+
+Example:
+
+```dart
+class CartProvider extends ChangeNotifier {
+
+  List<String> cart = [];
+
+  void addToCart(String item) {
+    cart.add(item);
+    notifyListeners();
+  }
+
+}
+```
+
+This keeps shared state separate from UI code.
+
+---
+
+# 9. How Everything Connects
+
+A typical application can look like:
+
+```text
+                Flutter App
+                    │
+                    ↓
+                 Screen
+                    │
+          ┌─────────┴─────────┐
+          ↓                   ↓
+       Provider            Service
+          ↓                   ↓
+       State                 API
+                              ↓
+                           JSON
+                              ↓
+                           Model
+                              ↓
+                            Screen
+```
+
+For example:
+
+```text
+HomeScreen
+    ↓
+UserProvider
+    ↓
+ApiService
+    ↓
+API
+    ↓
+JSON
+    ↓
+User Model
+    ↓
+Provider
+    ↓
+HomeScreen
+```
+
+---
+
+# 10. Example Real Project
+
+Suppose you're building a **Music Player**.
+
+You could organize it like:
+
+```text
+lib/
+│
+├── main.dart
+│
+├── screens/
+│   ├── home_screen.dart
+│   ├── player_screen.dart
+│   └── playlist_screen.dart
+│
+├── widgets/
+│   ├── song_tile.dart
+│   ├── search_bar.dart
+│   └── player_controls.dart
+│
+├── models/
+│   └── song.dart
+│
+├── services/
+│   └── music_service.dart
+│
+└── providers/
+    └── music_provider.dart
+```
+
+Now each part has a clear responsibility.
+
+---
+
+# 11. Don't Over-Organize Small Apps
+
+You don't need 30 folders for a simple practice project.
+
+For a small app:
+
+```text
+lib/
+├── main.dart
+├── home_screen.dart
+└── second_screen.dart
+```
+
+is completely fine.
+
+As the project grows, start separating things.
+
+---
+
+# 12. Important Principle — Separation of Responsibility
+
+Try to follow:
+
+```text
+Screen
+→ UI
+
+Widget
+→ Reusable UI
+
+Model
+→ Data structure
+
+Service
+→ API / database operations
+
+Provider
+→ Shared state
+```
+
+Don't mix everything together.
+
+For example, avoid:
+
+```text
+Screen
+ ├── UI
+ ├── API code
+ ├── database code
+ ├── JSON parsing
+ ├── state management
+ └── 1000 lines of logic
+```
+
+Instead:
+
+```text
+Screen
+ ↓
+Provider
+ ↓
+Service
+ ↓
+Model
+```
+
+---
+
+# 13. Easy Memory
+
+```text
+main.dart
+    ↓
+App starts here
+
+screens/
+    ↓
+Complete pages
+
+widgets/
+    ↓
+Reusable UI
+
+models/
+    ↓
+Data structure
+
+services/
+    ↓
+API / database
+
+providers/
+    ↓
+Shared state
+```
+
+### Most important rule
+
+**Don't organize your project based only on how many files you have. Organize it based on what each file is responsible for.**

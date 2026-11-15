@@ -1,0 +1,446 @@
+# Flutter Production & Release Basics
+
+## 1. Debug vs Release
+
+While developing, you normally run:
+
+```bash
+flutter run
+```
+
+This is **debug mode**.
+
+Debug mode is designed for development and debugging.
+
+For a real app, you create a **release build**.
+
+```text
+Debug
+↓
+Development/testing
+
+Release
+↓
+Real users
+```
+
+---
+
+# 2. Build an Android APK
+
+To create an APK:
+
+```bash
+flutter build apk
+```
+
+The APK can be found inside the project's:
+
+```text
+build/app/outputs/flutter-apk/
+```
+
+A release APK is typically:
+
+```text
+app-release.apk
+```
+
+You can install the APK on an Android phone for testing.
+
+---
+
+# 3. APK vs AAB
+
+There are two important Android formats.
+
+### APK
+
+Used mainly for:
+
+* Direct installation
+* Testing
+* Sharing an app file
+
+### AAB
+
+**Android App Bundle** is the format commonly used when publishing an Android app through Google Play.
+
+Build it with:
+
+```bash
+flutter build appbundle
+```
+
+The output is typically under:
+
+```text
+build/app/outputs/bundle/release/
+```
+
+Easy memory:
+
+```text
+APK
+↓
+Install/share directly
+
+AAB
+↓
+Google Play publishing
+```
+
+---
+
+# 4. App Name
+
+The name users see on the phone is different from your Flutter project name.
+
+For example:
+
+```text
+Project name:
+currency_converter
+
+App name:
+Currency Converter
+```
+
+The project name is used by Flutter internally, while the Android/iOS application metadata controls what users see.
+
+---
+
+# 5. App Icon
+
+A production app needs a proper launcher icon.
+
+Instead of manually creating all Android icon sizes, developers commonly use an icon-generation package/tool.
+
+The important idea is:
+
+```text
+Your logo
+   ↓
+App icon
+   ↓
+Phone launcher
+```
+
+You should prepare a proper square icon image before release.
+
+---
+
+# 6. App Permissions
+
+Some apps need access to phone features.
+
+Examples:
+
+```text
+Camera
+Location
+Microphone
+Photos/files
+Notifications
+Bluetooth
+```
+
+You should request **only the permissions your app actually needs**.
+
+For example:
+
+```text
+Music player
+↓
+Storage/media access
+
+Camera app
+↓
+Camera permission
+```
+
+Don't request unnecessary permissions.
+
+---
+
+# 7. API Keys and Secrets
+
+Never put private API keys directly into your source code.
+
+Avoid:
+
+```dart
+const apiKey = "MY_SECRET_KEY";
+```
+
+Especially if the key is supposed to remain private.
+
+A better development approach is to keep configuration outside the source code, for example using environment/configuration mechanisms.
+
+But remember:
+
+**A mobile app cannot truly hide a secret that must be delivered to the user's device.**
+
+If an API requires a genuinely secret server-side key, the safer architecture is:
+
+```text
+Flutter App
+    ↓
+Your Backend
+    ↓
+Private API Key
+    ↓
+External API
+```
+
+---
+
+# 8. Internet Permission
+
+For Android apps that access the internet, the Android application configuration needs internet permission.
+
+This is important for apps using:
+
+```text
+API
+Online images
+Firebase
+Web services
+```
+
+If you use Flutter's standard Android setup, check the Android configuration when networking isn't working.
+
+---
+
+# 9. App Version
+
+Real apps have versions.
+
+For example:
+
+```text
+1.0.0
+1.0.1
+1.1.0
+2.0.0
+```
+
+A version usually communicates changes between releases.
+
+Example:
+
+```text
+1.0.0
+↓
+First release
+
+1.0.1
+↓
+Small bug fix
+
+1.1.0
+↓
+New features
+
+2.0.0
+↓
+Major changes
+```
+
+Flutter's project configuration includes version information that is used during builds.
+
+---
+
+# 10. Testing Before Release
+
+Before giving the app to users, test:
+
+```text
+✓ Different screen sizes
+✓ Different Android versions
+✓ Orientation if supported
+✓ Buttons
+✓ Navigation
+✓ Forms
+✓ API errors
+✓ Offline behavior
+✓ Loading states
+✓ Empty data
+✓ Invalid input
+✓ App restart
+```
+
+Don't test only the "happy path."
+
+For example, for an API:
+
+```text
+Success
+↓
+Show data
+
+No internet
+↓
+Show error
+
+Server error
+↓
+Show error
+
+Empty response
+↓
+Show empty state
+```
+
+---
+
+# 11. Release Build Flow
+
+Your overall process becomes:
+
+```text
+Build app
+    ↓
+Test app
+    ↓
+Fix bugs
+    ↓
+Configure app name/icon/version
+    ↓
+Check permissions
+    ↓
+Create release build
+    ↓
+Test release build
+    ↓
+Publish
+```
+
+---
+
+# 12. Flutter Commands You Should Know
+
+### Check Flutter installation
+
+```bash
+flutter doctor
+```
+
+### Run the app
+
+```bash
+flutter run
+```
+
+### Get packages
+
+```bash
+flutter pub get
+```
+
+### Clean generated build files
+
+```bash
+flutter clean
+```
+
+Then:
+
+```bash
+flutter pub get
+```
+
+### Build Android APK
+
+```bash
+flutter build apk
+```
+
+### Build Android App Bundle
+
+```bash
+flutter build appbundle
+```
+
+---
+
+# 13. Production Mindset
+
+A project is not finished just because:
+
+```text
+"the screen works"
+```
+
+A real app should also handle:
+
+```text
+Loading
+Errors
+Empty data
+Bad input
+Offline situations
+Different screen sizes
+Permissions
+Security
+State
+Data storage
+```
+
+---
+
+# 14. Your Flutter Knowledge Map
+
+You have now covered the major building blocks:
+
+```text
+Flutter Basics
+      ↓
+Widgets
+      ↓
+Layouts
+      ↓
+Forms & Input
+      ↓
+Lists & Grids
+      ↓
+Navigation
+      ↓
+State
+      ↓
+API
+      ↓
+JSON + Models
+      ↓
+Local Storage
+      ↓
+SQLite
+      ↓
+Architecture
+      ↓
+Production
+```
+
+## The important part now
+
+You **do not need to keep learning widgets endlessly**.
+
+At this point, building projects will teach you how these concepts work together much better than memorizing more widgets.
+
+### Your next stage should be:
+
+```text
+Learn concept
+    ↓
+Build small app
+    ↓
+Get stuck
+    ↓
+Understand the problem
+    ↓
+Fix it
+    ↓
+Build bigger app
+```
+
+That is how you move from **knowing Flutter components → actually developing Flutter apps**.

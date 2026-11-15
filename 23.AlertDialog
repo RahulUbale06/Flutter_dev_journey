@@ -1,0 +1,222 @@
+# AlertDialog
+
+## 1. What is AlertDialog?
+
+`AlertDialog` is a popup box that appears **above the current screen** to ask the user something or show important information.
+
+Common uses:
+
+* Delete confirmation
+* Logout confirmation
+* Warning message
+* Success/error information
+* Asking for a choice
+* Small input forms
+
+Example:
+
+```dart
+showDialog(
+  context: context,
+  builder: (context) {
+    return AlertDialog(
+      title: Text("Delete Account"),
+      content: Text("Are you sure you want to delete your account?"),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: Text("Cancel"),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: Text("Delete"),
+        ),
+      ],
+    );
+  },
+);
+```
+
+---
+
+## 2. How it works
+
+The important part is:
+
+```dart
+showDialog(
+  context: context,
+  builder: (context) {
+    return AlertDialog(...);
+  },
+);
+```
+
+Think:
+
+```text
+Button clicked
+     ↓
+showDialog()
+     ↓
+AlertDialog appears
+```
+
+---
+
+## 3. Important properties
+
+### `title`
+
+Heading of the dialog.
+
+```dart
+title: Text("Delete Account")
+```
+
+### `content`
+
+Main information.
+
+```dart
+content: Text("Are you sure?")
+```
+
+### `actions`
+
+Buttons at the bottom.
+
+```dart
+actions: [
+  TextButton(
+    onPressed: () {},
+    child: Text("Cancel"),
+  ),
+]
+```
+
+---
+
+## 4. Closing the dialog
+
+Use:
+
+```dart
+Navigator.pop(context);
+```
+
+Example:
+
+```dart
+TextButton(
+  onPressed: () {
+    Navigator.pop(context);
+  },
+  child: Text("OK"),
+)
+```
+
+`Navigator.pop()` closes the currently open dialog.
+
+---
+
+## 5. Complete example
+
+```dart
+ElevatedButton(
+  onPressed: () {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("Logout"),
+          content: Text("Do you want to logout?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text("Cancel"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+
+                // logout code
+              },
+              child: Text("Logout"),
+            ),
+          ],
+        );
+      },
+    );
+  },
+  child: Text("Logout"),
+)
+```
+
+---
+
+## 6. Real-world example
+
+Suppose the user taps **Delete**:
+
+```text
+       Delete button
+            ↓
+    ┌─────────────────────┐
+    │   Delete Product?   │
+    │                     │
+    │ Are you sure?       │
+    │                     │
+    │ Cancel      Delete  │
+    └─────────────────────┘
+```
+
+This prevents accidental actions.
+
+---
+
+## 7. AlertDialog vs SnackBar
+
+| AlertDialog               | SnackBar             |
+| ------------------------- | -------------------- |
+| Popup in center           | Appears near bottom  |
+| Requires user interaction | Usually temporary    |
+| Confirmation              | Information/status   |
+| Delete confirmation       | "Saved successfully" |
+| Logout confirmation       | "Item deleted"       |
+
+### Memory trick
+
+**AlertDialog = Ask the user**
+
+**SnackBar = Tell the user**
+
+---
+
+## 8. Important methods to remember
+
+```dart
+showDialog()
+```
+
+→ Opens the dialog.
+
+```dart
+AlertDialog()
+```
+
+→ Creates the dialog UI.
+
+```dart
+Navigator.pop(context)
+```
+
+→ Closes the dialog.
+
+These three are the main things you need to remember.

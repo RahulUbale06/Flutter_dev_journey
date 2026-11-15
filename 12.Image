@@ -1,0 +1,537 @@
+# Flutter Component Revision Page — `Image`
+
+## 1. What is `Image`?
+
+`Image` is used to **display images** in a Flutter application.
+
+Images can come from:
+
+* Project assets
+* Internet URLs
+* Device files
+* Memory/data
+
+For beginner Flutter development, the two most important types are:
+
+```dart
+Image.asset()
+Image.network()
+```
+
+---
+
+# 2. Image from Project Assets
+
+Use `Image.asset()` when the image is stored inside your Flutter project.
+
+```dart
+Image.asset(
+  "assets/images/logo.png",
+)
+```
+
+Example project structure:
+
+```text
+my_app/
+│
+├── assets/
+│   └── images/
+│       └── logo.png
+│
+├── lib/
+│   └── main.dart
+│
+└── pubspec.yaml
+```
+
+---
+
+# 3. Registering Assets
+
+Flutter needs to know about your asset folder.
+
+In `pubspec.yaml`:
+
+```yaml
+flutter:
+  assets:
+    - assets/images/
+```
+
+Then run:
+
+```bash
+flutter pub get
+```
+
+Now you can use:
+
+```dart
+Image.asset(
+  "assets/images/logo.png",
+)
+```
+
+---
+
+# 4. Complete Asset Example
+
+```dart
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(
+    MaterialApp(
+      home: Scaffold(
+        body: Center(
+          child: Image.asset(
+            "assets/images/logo.png",
+            width: 200,
+          ),
+        ),
+      ),
+    ),
+  );
+}
+```
+
+---
+
+# 5. Image from Internet
+
+Use:
+
+```dart
+Image.network()
+```
+
+Example:
+
+```dart
+Image.network(
+  "https://example.com/image.jpg",
+)
+```
+
+Complete example:
+
+```dart
+Scaffold(
+  body: Center(
+    child: Image.network(
+      "https://picsum.photos/300",
+    ),
+  ),
+)
+```
+
+This downloads and displays the image from the URL.
+
+---
+
+# 6. Important Difference
+
+### `Image.asset()`
+
+```dart
+Image.asset("assets/images/logo.png")
+```
+
+Image is stored **inside your application/project**.
+
+Common uses:
+
+* Logo
+* App icons
+* Background images
+* Onboarding images
+* Local illustrations
+
+### `Image.network()`
+
+```dart
+Image.network("https://example.com/image.jpg")
+```
+
+Image comes from the **internet**.
+
+Common uses:
+
+* User profile pictures
+* Product images
+* News images
+* Social media content
+* API-provided images
+
+---
+
+# 7. `width` and `height`
+
+You can control image dimensions.
+
+```dart
+Image.asset(
+  "assets/images/logo.png",
+  width: 200,
+  height: 100,
+)
+```
+
+Or:
+
+```dart
+Image.network(
+  "https://picsum.photos/300",
+  width: 200,
+  height: 200,
+)
+```
+
+---
+
+# 8. `fit`
+
+`fit` controls **how the image fits inside the given width and height**.
+
+This is very important.
+
+```dart
+fit: BoxFit.cover
+```
+
+fills the available area, possibly cropping part of the image.
+
+```dart
+fit: BoxFit.contain
+```
+
+shows the entire image while maintaining its aspect ratio.
+
+Example:
+
+```dart
+Image.network(
+  "https://picsum.photos/500",
+  width: 300,
+  height: 200,
+  fit: BoxFit.cover,
+)
+```
+
+---
+
+# 9. Important `BoxFit` Values
+
+### `BoxFit.cover`
+
+Fill the entire area.
+
+```text
+┌──────────────────┐
+│   IMAGE IMAGE    │
+│ IMAGE IMAGE      │
+│    IMAGE IMAGE   │
+└──────────────────┘
+```
+
+Some parts may be cropped.
+
+Common for:
+
+* Product cards
+* Banners
+* Profile backgrounds
+* Thumbnails
+
+---
+
+### `BoxFit.contain`
+
+Show the complete image.
+
+```text
+┌──────────────────┐
+│                  │
+│     IMAGE        │
+│                  │
+└──────────────────┘
+```
+
+The entire image remains visible.
+
+Common for:
+
+* Logos
+* Product images
+* Icons
+* Documents
+
+---
+
+### `BoxFit.fill`
+
+Stretches the image to exactly fit the specified size.
+
+This can distort the image.
+
+```dart
+fit: BoxFit.fill
+```
+
+---
+
+### `BoxFit.fitWidth`
+
+Fits the image according to the available width.
+
+### `BoxFit.fitHeight`
+
+Fits the image according to the available height.
+
+### `BoxFit.none`
+
+Does not scale the image.
+
+---
+
+# 10. `Image` Inside a Container
+
+A common pattern:
+
+```dart
+Container(
+  width: 300,
+  height: 200,
+  child: Image.network(
+    "https://picsum.photos/500",
+    fit: BoxFit.cover,
+  ),
+)
+```
+
+The image fills the Container while maintaining its proportions.
+
+---
+
+# 11. Image + `Stack`
+
+Images are frequently combined with `Stack`.
+
+Example:
+
+```dart
+Stack(
+  children: [
+    Image.network(
+      "https://picsum.photos/400/250",
+      width: 400,
+      height: 250,
+      fit: BoxFit.cover,
+    ),
+
+    Positioned(
+      bottom: 10,
+      left: 10,
+      child: Text(
+        "Beautiful Place",
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 22,
+        ),
+      ),
+    ),
+  ],
+)
+```
+
+This creates:
+
+```text
+┌─────────────────────────┐
+│                         │
+│        IMAGE            │
+│                         │
+│ Beautiful Place         │
+└─────────────────────────┘
+```
+
+---
+
+# 12. Image with Rounded Corners
+
+A common real-world design:
+
+```dart
+ClipRRect(
+  borderRadius: BorderRadius.circular(15),
+  child: Image.network(
+    "https://picsum.photos/300",
+    width: 300,
+    height: 200,
+    fit: BoxFit.cover,
+  ),
+)
+```
+
+`ClipRRect` clips the image into rounded corners.
+
+---
+
+# 13. `CircleAvatar` for Profile Images
+
+For profile pictures, Flutter provides:
+
+```dart
+CircleAvatar()
+```
+
+Example:
+
+```dart
+CircleAvatar(
+  radius: 40,
+  backgroundImage: NetworkImage(
+    "https://example.com/profile.jpg",
+  ),
+)
+```
+
+This is commonly used for:
+
+* User profiles
+* Chat lists
+* Contacts
+* Comments
+* Account screens
+
+---
+
+# 14. Image Loading
+
+For network images, Flutter needs time to download the image.
+
+You can provide a loading builder:
+
+```dart
+Image.network(
+  "https://picsum.photos/300",
+  loadingBuilder: (
+    context,
+    child,
+    loadingProgress,
+  ) {
+    if (loadingProgress == null) {
+      return child;
+    }
+
+    return CircularProgressIndicator();
+  },
+)
+```
+
+The progress indicator appears while the image loads.
+
+---
+
+# 15. Image Error Handling
+
+If the network image fails:
+
+```dart
+Image.network(
+  "https://example.com/image.jpg",
+  errorBuilder: (
+    context,
+    error,
+    stackTrace,
+  ) {
+    return Icon(Icons.error);
+  },
+)
+```
+
+Instead of a broken image, you can show an error icon.
+
+---
+
+# 16. Where is `Image` Used?
+
+You will use images in:
+
+* Login screens
+* Splash screens
+* Onboarding
+* E-commerce apps
+* Music apps
+* Social media apps
+* Profile pages
+* News apps
+* Food delivery apps
+* Product cards
+* Banners
+* Backgrounds
+
+---
+
+# 17. Quick Comparison
+
+| Method              | Source         | Common Use              |
+| ------------------- | -------------- | ----------------------- |
+| `Image.asset()`     | Project        | Logo, local images      |
+| `Image.network()`   | Internet       | API/user/product images |
+| `CircleAvatar()`    | Circular image | Profile pictures        |
+| `ClipRRect` + Image | Rounded image  | Cards/thumbnails        |
+
+---
+
+# 18. Most Important Code to Remember
+
+### Local image
+
+```dart
+Image.asset(
+  "assets/images/logo.png",
+)
+```
+
+### Internet image
+
+```dart
+Image.network(
+  "https://example.com/image.jpg",
+)
+```
+
+### Resize
+
+```dart
+Image.network(
+  url,
+  width: 200,
+  height: 150,
+)
+```
+
+### Control image fitting
+
+```dart
+Image.network(
+  url,
+  fit: BoxFit.cover,
+)
+```
+
+### Profile image
+
+```dart
+CircleAvatar(
+  backgroundImage: NetworkImage(url),
+)
+```
+
+---
+
+## One-Line Definition
+
+> **`Image` is a Flutter widget used to display images from assets, the internet, files, or other data sources.**

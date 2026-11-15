@@ -1,0 +1,503 @@
+# State Management — Provider
+
+## 1. What is State Management?
+
+**State** means data that can change while the app is running.
+If all these screens need the same cart data, passing it manually between screens becomes difficult.
+
+Examples:
+
+```text
+Login status
+Cart items
+Username
+Selected currency
+Dark mode
+Counter value
+API data
+Loading status
+```
+
+For small screens, `setState()` is enough.
+
+But imagine:
+
+```text
+Home Screen
+     ↓
+Product Screen
+     ↓
+Cart Screen
+     ↓
+Checkout Screen
+```
+
+If all these screens need the same cart data, passing it manually between screens becomes difficult.
+
+This is where **state management** helps.
+
+---
+
+# 2. `setState()` vs State Management
+
+### Small app
+
+```dart
+setState(() {
+  count++;
+});
+```
+
+Good for local screen state.
+
+### Larger app
+
+```text
+Many widgets
+     ↓
+Same data needed
+     ↓
+Shared state
+     ↓
+State management
+```
+
+Provider is one commonly used approach.
+
+---
+
+# 3. What is Provider?
+
+**Provider** allows widgets to access shared data without manually passing that data through every widget.
+
+Think of it as a **shared data source**.
+
+```text
+             Provider
+                ↓
+       ┌────────┼────────┐
+       ↓        ↓        ↓
+     Home     Cart    Checkout
+```
+
+All three screens can access the same state.
+
+---
+
+# 4. Install Provider
+
+Add the `provider` package to your project.
+
+Then import:
+
+```dart
+import 'package:provider/provider.dart';
+```
+
+---
+
+# 5. Create a Model
+
+Suppose we have a counter.
+
+```dart
+class CounterProvider extends ChangeNotifier {
+
+  int count = 0;
+
+  void increment() {
+    count++;
+    notifyListeners();
+  }
+
+}
+```
+
+### Important parts
+
+```dart
+ChangeNotifier
+```
+
+Allows the class to notify widgets when data changes.
+
+```dart
+count
+```
+
+Our shared state.
+
+```dart
+notifyListeners();
+```
+
+Tells listening widgets:
+
+> "The data changed. Update the UI."
+
+---
+
+# 6. Provide the State
+
+Put the provider above the widgets that need it.
+
+```dart
+void main() {
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => CounterProvider(),
+      child: MyApp(),
+    ),
+  );
+}
+```
+
+Now `CounterProvider` is available to the app below it.
+
+---
+
+# 7. Read the Data
+
+Inside a widget:
+
+```dart
+final counter = Provider.of<CounterProvider>(context);
+```
+
+Then:
+
+```dart
+Text(
+  "${counter.count}",
+)
+```
+
+---
+
+# 8. Change the Data
+
+Call the provider method:
+
+```dart
+counter.increment();
+```
+
+Complete button:
+
+```dart
+ElevatedButton(
+  onPressed: () {
+    counter.increment();
+  },
+  child: Text("Add"),
+)
+```
+
+When `increment()` runs:
+
+```text
+count++
+   ↓
+notifyListeners()
+   ↓
+Listening widgets rebuild
+   ↓
+New count appears
+```
+
+---
+
+# 9. Complete Example
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+class CounterProvider extends ChangeNotifier {
+
+  int count = 0;
+
+  void increment() {
+    count++;
+    notifyListeners();
+  }
+
+}
+
+void main() {
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => CounterProvider(),
+      child: MyApp(),
+    ),
+  );
+}
+
+class MyApp extends StatelessWidget {
+
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: CounterScreen(),
+    );
+  }
+}
+
+class CounterScreen extends StatelessWidget {
+
+  const CounterScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+
+    final counter = Provider.of<CounterProvider>(context);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Counter"),
+      ),
+
+      body: Center(
+        child: Text(
+          "${counter.count}",
+          style: TextStyle(fontSize: 40),
+        ),
+      ),
+
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          counter.increment();
+        },
+        child: Icon(Icons.add),
+      ),
+    );
+  }
+}
+```
+
+---
+
+# 10. `notifyListeners()` is Important
+
+Suppose:
+
+```dart
+void increment() {
+  count++;
+}
+```
+
+The value changes, but Provider does not know that widgets need updating.
+
+So we use:
+
+```dart
+notifyListeners();
+```
+
+Therefore:
+
+```dart
+void increment() {
+  count++;
+  notifyListeners();
+}
+```
+
+Memory:
+
+```text
+Change data
+    ↓
+notifyListeners()
+    ↓
+UI updates
+```
+
+---
+
+# 11. `Consumer`
+
+Instead of:
+
+```dart
+Provider.of<CounterProvider>(context);
+```
+
+you can use:
+
+```dart
+Consumer<CounterProvider>(
+  builder: (context, counter, child) {
+    return Text(
+      "${counter.count}",
+    );
+  },
+)
+```
+
+The `Consumer` listens to the provider and rebuilds when its data changes.
+
+---
+
+# 12. `listen: false`
+
+Sometimes you only want to call a function and don't need the widget to rebuild.
+
+Example:
+
+```dart
+final counter = Provider.of<CounterProvider>(
+  context,
+  listen: false,
+);
+```
+
+Then:
+
+```dart
+counter.increment();
+```
+
+This is useful when accessing a provider only for an action.
+
+---
+
+# 13. `setState()` vs Provider
+
+| `setState()`                  | Provider                      |
+| ----------------------------- | ----------------------------- |
+| Local state                   | Shared state                  |
+| Simple screens                | Larger apps                   |
+| Easy to learn                 | Better for shared data        |
+| Usually inside StatefulWidget | Can work with StatelessWidget |
+| Small projects                | Multi-screen applications     |
+
+Example:
+
+```text
+Password visibility
+        ↓
+setState()
+```
+
+But:
+
+```text
+Shopping cart
+     ↓
+Home
+Product
+Cart
+Checkout
+     ↓
+Provider
+```
+
+---
+
+# 14. Real-World Example — Shopping Cart
+
+Imagine:
+
+```dart
+class CartProvider extends ChangeNotifier {
+
+  List<String> cart = [];
+
+  void addToCart(String product) {
+    cart.add(product);
+    notifyListeners();
+  }
+
+  void removeFromCart(String product) {
+    cart.remove(product);
+    notifyListeners();
+  }
+}
+```
+
+Now:
+
+```text
+Product Screen
+      ↓
+addToCart()
+      ↓
+CartProvider
+      ↓
+notifyListeners()
+      ↓
+Cart Screen updates
+```
+
+You don't need to pass the entire cart manually from Product → Home → Cart.
+
+---
+
+# 15. When Should You Use It?
+
+Use `setState()` when:
+
+```text
+One screen
+Small amount of state
+Simple UI
+```
+
+Use state management when:
+
+```text
+Multiple screens
+Shared data
+Large application
+Complex state
+API data used by many widgets
+Shopping cart
+Authentication
+User preferences
+```
+
+---
+
+# 16. Easy Memory
+
+```text
+setState()
+    ↓
+Local state
+
+Provider
+    ↓
+Shared state
+
+ChangeNotifier
+    ↓
+Stores/manages state
+
+notifyListeners()
+    ↓
+Tells UI that state changed
+
+Consumer
+    ↓
+Listens to provider
+```
+
+### Main idea
+
+```text
+UI
+ ↓
+Provider
+ ↓
+State changes
+ ↓
+notifyListeners()
+ ↓
+UI rebuilds
+```
+
+You don't need to memorize every Provider method right now. First understand the **state → change → notify → UI update** flow.
